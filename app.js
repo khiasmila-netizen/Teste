@@ -271,5 +271,11 @@ renderAll();
 
 // Permite instalar como app (precisa de https, ex.: GitHub Pages)
 if ("serviceWorker" in navigator && location.protocol === "https:") {
-  navigator.serviceWorker.register("sw.js");
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js", { updateViaCache: "none" });
+  // Quando chega uma versão nova, recarrega uma vez para a mostrar
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (hadController && !reloaded) { reloaded = true; location.reload(); }
+  });
 }
