@@ -14,15 +14,15 @@
   <header>
     <h1>🥗 Dieta Katia</h1>
     <nav>
-      <button class="tab active" data-tab="hoje">Hoje</button>
+      <button class="tab active" data-tab="diario">Diário</button>
       <button class="tab" data-tab="perfil">Perfil</button>
       <button class="tab" data-tab="peso">Peso</button>
     </nav>
   </header>
 
   <main>
-    <!-- HOJE -->
-    <section id="hoje" class="panel active">
+    <!-- DIÁRIO -->
+    <section id="diario" class="panel active">
       <div class="day-nav">
         <button id="prevDay" aria-label="Dia anterior">‹</button>
         <input type="date" id="dayPicker">
@@ -30,16 +30,15 @@
       </div>
 
       <div class="card summary">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 120 120" class="ring">
-            <circle cx="60" cy="60" r="52" class="ring-bg"/>
-            <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
-          </svg>
-          <div class="ring-label">
-            <strong id="kcalLeft">0</strong>
-            <span id="kcalLeftLabel">kcal restantes</span>
-          </div>
+        <h2>Calorias restantes</h2>
+        <div class="equation">
+          <div><strong id="eqMeta">0</strong><span>Meta</span></div>
+          <div class="op">−</div>
+          <div><strong id="eqFood">0</strong><span>Alimentos</span></div>
+          <div class="op">=</div>
+          <div class="result"><strong id="eqLeft">0</strong><span id="eqLeftLabel">Restantes</span></div>
         </div>
+        <div class="bar big"><i id="barKcal"></i></div>
         <div class="macros">
           <div class="macro"><span>Proteína</span><div class="bar"><i id="barP"></i></div><small id="txtP"></small></div>
           <div class="macro"><span>Hidratos</span><div class="bar"><i id="barC"></i></div><small id="txtC"></small></div>
@@ -47,45 +46,34 @@
         </div>
       </div>
 
+      <div id="meals"></div>
+
       <div class="card">
         <h2>💧 Água</h2>
         <div id="water" class="water"></div>
-        <small id="waterTxt"></small>
+        <small id="waterTxt" class="muted"></small>
       </div>
-
-      <div class="card">
-        <h2>Adicionar alimento</h2>
-        <form id="addForm" class="add-form">
-          <select id="meal">
-            <option>Pequeno-almoço</option>
-            <option>Almoço</option>
-            <option>Lanche</option>
-            <option>Jantar</option>
-            <option>Ceia</option>
-          </select>
-          <input list="foodList" id="food" placeholder="Alimento" required>
-          <datalist id="foodList"></datalist>
-          <input type="number" id="grams" placeholder="Gramas" min="1" value="100" required>
-          <button type="submit">Adicionar</button>
-        </form>
-        <details class="custom">
-          <summary>Alimento não está na lista? Introduz manualmente</summary>
-          <form id="customForm" class="add-form">
-            <input id="cNome" placeholder="Nome" required>
-            <input type="number" id="cKcal" placeholder="kcal/100g" min="0" step="any" required>
-            <input type="number" id="cP" placeholder="Prot/100g" min="0" step="any" value="0">
-            <input type="number" id="cC" placeholder="Hidr/100g" min="0" step="any" value="0">
-            <input type="number" id="cG" placeholder="Gord/100g" min="0" step="any" value="0">
-            <button type="submit">Guardar alimento</button>
-          </form>
-        </details>
-      </div>
-
-      <div id="meals"></div>
     </section>
 
     <!-- PERFIL -->
     <section id="perfil" class="panel">
+      <div class="card" id="goalCard">
+        <h2>A minha meta</h2>
+        <div class="goal-stats">
+          <div class="target"><strong id="gInicial">–</strong><span>Peso inicial</span></div>
+          <div class="target"><strong id="gAtual">–</strong><span>Peso atual</span></div>
+          <div class="target"><strong id="gMeta">–</strong><span>Peso meta</span></div>
+        </div>
+        <div class="goal-left" id="gFaltam"></div>
+        <div class="bar big"><i id="gBar"></i></div>
+        <small class="muted" id="gProgress"></small>
+        <form id="goalForm" class="grid-form goal-form">
+          <label>Peso inicial (kg) <input type="number" id="pesoInicial" name="pesoInicial" min="30" max="300" step="0.1"></label>
+          <label>Peso meta (kg) <input type="number" id="pesoMeta" name="pesoMeta" min="30" max="300" step="0.1"></label>
+          <button type="submit">Guardar meta</button>
+        </form>
+      </div>
+
       <div class="card">
         <h2>O teu perfil</h2>
         <form id="profileForm" class="grid-form">
@@ -94,7 +82,7 @@
           </label>
           <label>Idade <input type="number" name="idade" min="10" max="100" required></label>
           <label>Altura (cm) <input type="number" name="altura" min="100" max="250" required></label>
-          <label>Peso (kg) <input type="number" name="peso" min="30" max="300" step="0.1" required></label>
+          <label>Peso atual (kg) <input type="number" name="peso" min="30" max="300" step="0.1" required></label>
           <label>Atividade
             <select name="atividade">
               <option value="1.2">Sedentário</option>
@@ -110,6 +98,15 @@
               <option value="0">Manter</option>
               <option value="300">Ganhar massa (+300 kcal)</option>
             </select>
+          </label>
+          <label class="full">Meta de calorias
+            <select name="modoKcal" id="modoKcal">
+              <option value="auto">Automática (calculada pelo perfil)</option>
+              <option value="manual">Definir manualmente</option>
+            </select>
+          </label>
+          <label class="full" id="kcalManualWrap" hidden>Calorias por dia (kcal)
+            <input type="number" name="kcalManual" id="kcalManual" min="800" max="6000" step="10">
           </label>
           <button type="submit">Guardar</button>
         </form>
@@ -138,6 +135,16 @@
       </div>
     </section>
   </main>
+
+  <!-- Ecrã de adicionar / editar alimento -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-head">
+      <button id="sheetBack" class="icon-btn" aria-label="Voltar">‹</button>
+      <h2 id="sheetTitle"></h2>
+      <button id="sheetClose" class="icon-btn" aria-label="Fechar">✕</button>
+    </div>
+    <div id="sheetBody" class="sheet-body"></div>
+  </div>
 
   <script src="foods.js"></script>
   <script src="app.js"></script>
