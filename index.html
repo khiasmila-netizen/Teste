@@ -15,6 +15,7 @@
     <h1>🥗 Dieta Katia</h1>
     <nav>
       <button class="tab active" data-tab="diario">Diário</button>
+      <button class="tab" data-tab="plano">Plano</button>
       <button class="tab" data-tab="perfil">Perfil</button>
       <button class="tab" data-tab="peso">Peso</button>
     </nav>
@@ -53,6 +54,16 @@
         <div id="water" class="water"></div>
         <small id="waterTxt" class="muted"></small>
       </div>
+    </section>
+
+    <!-- PLANO ALIMENTAR -->
+    <section id="plano" class="panel">
+      <div class="day-nav">
+        <button id="prevWeek" aria-label="Semana anterior">‹</button>
+        <div class="week-label" id="weekLabel"></div>
+        <button id="nextWeek" aria-label="Semana seguinte">›</button>
+      </div>
+      <div id="planoBody"></div>
     </section>
 
     <!-- PERFIL -->
@@ -147,6 +158,7 @@
   </div>
 
   <script src="foods.js"></script>
+  <script src="plano.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -26,6 +26,7 @@ html = (ROOT / "index.html").read_text()
 css = (ROOT / "style.css").read_text()
 js = (ROOT / "app.js").read_text()
 foods = (ROOT / "foods.js").read_text()
+plano = (ROOT / "plano.js").read_text()
 
 body = html.split("<body>")[1].split('<script src="foods.js">')[0].strip()
 
@@ -153,6 +154,7 @@ out = f"""<title>Dieta Katia</title>
 {body}
 <script>
 {foods}
+{plano}
 {js}</script>
 """
 pathlib.Path(sys.argv[1]).write_text(out)

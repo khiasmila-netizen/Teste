@@ -11,6 +11,7 @@ Abre o ficheiro `index.html` no browser. Os dados ficam guardados no próprio br
 - **Perfil**: peso inicial, atual e meta (quanto falta), sexo, idade, altura, peso, atividade e objetivo → calcula metas diárias de calorias e macros (fórmula Mifflin-St Jeor).
 - **Diário** (estilo MyFitnessPal): Meta − Alimentos = Restantes, 5 refeições, pesquisa com recentes e porções, código de barras (Open Food Facts), copiar de ontem, refeições guardadas e água.
 - **Alimentos**: ~170 alimentos em `foods.js` (com porções) + alimentos criados por ti.
+- **Plano**: plano alimentar semanal (em `plano.js`) com kcal e macros por refeição; cada refeição ou o dia todo pode ser adicionado ao Diário.
 - **Peso**: regista o peso e vê o gráfico de evolução.
 
 ## Estrutura

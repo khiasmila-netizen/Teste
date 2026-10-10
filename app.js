@@ -519,6 +519,154 @@ async function lookupBarcode(code) {
   }
 }
 
+// ---------- Plano alimentar semanal ----------
+const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+const DIAS_CURTOS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+let planoSemana = mondayOf(todayISO());
+let planoDia = (new Date().getDay() + 6) % 7; // 0 = segunda
+
+function mondayOf(iso) {
+  const d = new Date(iso + "T12:00:00");
+  return shiftDay(iso, -((d.getDay() + 6) % 7));
+}
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+function fmtDiaMes(iso) {
+  const d = new Date(iso + "T12:00:00");
+  return `${d.getDate()} ${MESES[d.getMonth()]}`;
+}
+
+// Converte um ingrediente do plano num item do diário (com kcal e macros)
+function planItem([nome, qtd, tipo], refeicao) {
+  const food = findFood(nome);
+  if (!food) return null;
+  const porcoes = tipo === "p" && food.porcao ? qtd : null;
+  const item = makeItem(food, porcoes ? qtd * food.porcaoG : qtd, refeicao);
+  if (porcoes) {
+    item.porcoes = porcoes;
+    item.porcaoTxt = porcoes === 1 ? food.porcao : `${porcoes} × ${food.porcao}`;
+  }
+  return item;
+}
+function planMeal(plano, dia, ref) {
+  const r = plano.dias[dia]?.[ref];
+  if (!r) return null;
+  const itens = r.itens.map((i) => planItem(i, ref));
+  return { ...r, itens: itens.filter(Boolean), faltam: r.itens.filter((_, k) => !itens[k]).map((i) => i[0]) };
+}
+const planTag = (plano, dia, ref) => `${plano.semana}|${dia}|${ref}`;
+function inDiary(plano, dia, ref) {
+  const d = state.dias[shiftDay(plano.semana, dia)];
+  return !!d && d.itens.some((i) => i.plano === planTag(plano, dia, ref));
+}
+function addMealToDiary(plano, dia, ref) {
+  const m = planMeal(plano, dia, ref);
+  if (!m || inDiary(plano, dia, ref)) return 0;
+  const tag = planTag(plano, dia, ref);
+  getDay(shiftDay(plano.semana, dia)).itens.push(...m.itens.map((i) => ({ ...i, plano: tag })));
+  m.itens.forEach((i) => addRecente(i.nome));
+  return 1;
+}
+function removeMealFromDiary(plano, dia, ref) {
+  const d = state.dias[shiftDay(plano.semana, dia)];
+  if (d) d.itens = d.itens.filter((i) => i.plano !== planTag(plano, dia, ref));
+}
+
+function renderPlano() {
+  const plano = PLANOS.find((p) => p.semana === planoSemana);
+  $("#weekLabel").innerHTML = `<strong>${fmtDiaMes(planoSemana)} a ${fmtDiaMes(shiftDay(planoSemana, 6))}</strong><span>${plano ? esc(plano.titulo || "Plano semanal") : "Sem plano"}</span>`;
+  const body = $("#planoBody");
+
+  if (!plano) {
+    const outras = PLANOS.map((p) => p.semana).sort();
+    body.innerHTML = `<div class="card empty">
+      <p><strong>Ainda não há plano para esta semana.</strong></p>
+      <p>Pede ao Claude um plano novo e ele aparece aqui. Depois escolhes o que queres passar para o Diário.</p>
+      ${outras.length ? `<button class="link" id="lastPlan">Ver o plano mais recente</button>` : ""}
+    </div>`;
+    if (outras.length) $("#lastPlan").onclick = () => { planoSemana = outras.at(-1); renderPlano(); };
+    return;
+  }
+
+  const tgt = calcTargets(state.perfil) || DEFAULT_TARGETS;
+  const data = shiftDay(plano.semana, planoDia);
+  const refs = REFEICOES.map((ref) => ({ ref, m: planMeal(plano, planoDia, ref) })).filter((x) => x.m);
+  const totDia = totals(refs.flatMap((x) => x.m.itens));
+
+  // Média da semana
+  const diasCom = plano.dias.map((_, d) => totals(REFEICOES.flatMap((r) => planMeal(plano, d, r)?.itens || []))).filter((t) => t.kcal > 0);
+  const media = diasCom.length ? diasCom.reduce((a, t) => a + t.kcal, 0) / diasCom.length : 0;
+
+  body.innerHTML = `
+    <div class="day-chips">${DIAS_CURTOS.map((d, i) => `<button class="day-chip ${i === planoDia ? "active" : ""} ${shiftDay(plano.semana, i) === todayISO() ? "today" : ""}" data-d="${i}">${d}<small>${new Date(shiftDay(plano.semana, i) + "T12:00:00").getDate()}</small></button>`).join("")}</div>
+
+    <div class="card plan-summary">
+      <div class="meal-head"><h2>${DIAS_SEMANA[planoDia]}, ${fmtDiaMes(data)}</h2><strong>${round(totDia.kcal)} kcal</strong></div>
+      <div class="macros">
+        <div class="macro"><span>Proteína</span><div class="bar"><i class="bp" style="width:${Math.min(100, totDia.p / tgt.p * 100)}%"></i></div><small>${round(totDia.p)} / ${round(tgt.p)} g</small></div>
+        <div class="macro"><span>Hidratos</span><div class="bar"><i class="bc" style="width:${Math.min(100, totDia.c / tgt.c * 100)}%"></i></div><small>${round(totDia.c)} / ${round(tgt.c)} g</small></div>
+        <div class="macro"><span>Gordura</span><div class="bar"><i class="bg" style="width:${Math.min(100, totDia.g / tgt.g * 100)}%"></i></div><small>${round(totDia.g)} / ${round(tgt.g)} g</small></div>
+      </div>
+      <p class="muted small">A tua meta: ${round(tgt.kcal)} kcal/dia · Média do plano: ${round(media)} kcal/dia</p>
+      ${refs.length ? `<button class="primary block" id="addDay">Adicionar o dia todo ao Diário</button>` : ""}
+    </div>
+
+    <div id="planMeals"></div>
+    ${plano.notas ? `<div class="card"><h2>Notas da semana</h2><p class="notes"></p></div>` : ""}`;
+
+  if (plano.notas) body.querySelector(".notes").textContent = plano.notas;
+  body.querySelectorAll(".day-chip").forEach((b) => (b.onclick = () => { planoDia = +b.dataset.d; renderPlano(); }));
+  const addDay = $("#addDay");
+  if (addDay) {
+    const todos = refs.every((x) => inDiary(plano, planoDia, x.ref));
+    addDay.disabled = todos;
+    addDay.textContent = todos ? "✓ Dia todo no Diário" : "Adicionar o dia todo ao Diário";
+    addDay.onclick = () => {
+      const n = refs.reduce((a, x) => a + addMealToDiary(plano, planoDia, x.ref), 0);
+      save(); renderAll();
+      toast(`${n} refeição(ões) adicionadas ao Diário de ${fmtDiaMes(data)}.`);
+    };
+  }
+
+  const wrap = $("#planMeals");
+  if (!refs.length) {
+    wrap.innerHTML = `<div class="card empty">Este dia ainda não tem refeições no plano.</div>`;
+    return;
+  }
+  for (const { ref, m } of refs) {
+    const t = totals(m.itens);
+    const added = inDiary(plano, planoDia, ref);
+    const card = document.createElement("div");
+    card.className = "card plan-meal" + (added ? " added" : "");
+    card.innerHTML = `
+      <div class="meal-head"><h2>${ref}</h2><strong>${round(t.kcal)} kcal</strong></div>
+      <div class="dish"></div>
+      <div class="macro-pills"><span class="pill p">P ${round(t.p)} g</span><span class="pill c">H ${round(t.c)} g</span><span class="pill g">G ${round(t.g)} g</span></div>
+      <ul class="list ingredients"></ul>
+      ${m.faltam.length ? `<p class="small warn">Sem dados nutricionais: ${esc(m.faltam.join(", "))}</p>` : ""}
+      <div class="meal-actions">
+        ${added
+          ? `<span class="in-diary">✓ No Diário</span><button class="link undo">Retirar</button>`
+          : `<button class="link add">+ Adicionar ao Diário</button>`}
+      </div>`;
+    card.querySelector(".dish").textContent = m.nome || "";
+    const ul = card.querySelector(".ingredients");
+    for (const it of m.itens) {
+      const li = document.createElement("li");
+      li.innerHTML = `<div><div class="name"></div><div class="meta">${esc(it.porcaoTxt || it.gramas + " g")}</div></div><div class="kcal">${round(it.kcal)}</div>`;
+      li.querySelector(".name").textContent = it.nome;
+      ul.appendChild(li);
+    }
+    const add = card.querySelector(".add");
+    if (add) add.onclick = () => { addMealToDiary(plano, planoDia, ref); save(); renderAll(); toast(`${ref} adicionado ao Diário de ${fmtDiaMes(data)}.`); };
+    const undo = card.querySelector(".undo");
+    if (undo) undo.onclick = () => { removeMealFromDiary(plano, planoDia, ref); save(); renderAll(); toast(`${ref} retirado do Diário.`); };
+    wrap.appendChild(card);
+  }
+}
+
+$("#prevWeek").onclick = () => { planoSemana = shiftDay(planoSemana, -7); renderPlano(); };
+$("#nextWeek").onclick = () => { planoSemana = shiftDay(planoSemana, 7); renderPlano(); };
+
 // ---------- Aviso rápido ----------
 let toastTimer;
 function toast(msg) {
@@ -696,6 +844,7 @@ window.addEventListener("popstate", () => closeSheet());
 
 function renderAll() {
   renderDiario();
+  renderPlano();
   renderPerfil();
   renderPeso();
 }

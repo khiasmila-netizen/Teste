@@ -187,3 +187,24 @@ button.block { width: 100%; padding: 12px; font-size: 1rem; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 .list li.list-head { display: block; border-top: none; padding: 14px 0 4px; font-size: .78rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
 .list li.list-head + li { border-top: none; }
+
+/* Plano alimentar */
+nav .tab { padding: 8px 4px; font-size: .92rem; }
+.week-label { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 8px; background: var(--card); padding: 4px 8px; text-align: center; }
+.week-label span { font-size: .75rem; color: var(--muted); }
+.day-chips { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 14px; }
+.day-chip { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; cursor: pointer; font-size: .8rem; }
+.day-chip small { font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.day-chip.today { border-color: var(--accent); }
+.day-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.plan-summary .macros { margin-bottom: 10px; }
+.bar i.bp { background: var(--p); } .bar i.bc { background: var(--c); } .bar i.bg { background: var(--g); }
+.plan-summary button.block:disabled { opacity: .6; cursor: default; }
+.plan-meal .dish { font-weight: 600; margin: 2px 0 8px; }
+.macro-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.pill { font-size: .75rem; padding: 3px 8px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.pill.p { border-color: var(--p); } .pill.c { border-color: var(--c); } .pill.g { border-color: var(--g); }
+.plan-meal.added { border-color: var(--accent); }
+.in-diary { color: var(--accent); font-weight: 600; font-size: .9rem; }
+.warn { color: var(--over); }
+.empty p { margin: 0 0 8px; }
