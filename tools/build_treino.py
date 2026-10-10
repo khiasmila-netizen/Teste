@@ -31,9 +31,10 @@ sw = """<script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).catch(() => {});
   // Quando chega uma versão nova, recarrega uma vez para a mostrar logo.
+  const jaTinha = !!navigator.serviceWorker.controller; // na 1.ª visita não é preciso recarregar
   let recarregou = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (recarregou || !navigator.serviceWorker.controller) return;
+    if (recarregou || !jaTinha) return;
     recarregou = true;
     location.reload();
   });
