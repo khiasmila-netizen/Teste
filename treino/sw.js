@@ -1,6 +1,6 @@
 // Service worker: guarda os ficheiros da app para funcionar sem internet.
 // A versão é aumentada por tools/build_treino.py, para o telemóvel ir buscar a nova versão.
-const CACHE = "treino-v1";
+const CACHE = "treino-v2";
 const PREFIX = CACHE.replace(/\d+$/, ""); // só apaga caches desta app
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"];
 

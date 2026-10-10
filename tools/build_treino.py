@@ -28,7 +28,16 @@ head = """<!doctype html>
 <body>
 """
 sw = """<script>
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).catch(() => {});
+  // Quando chega uma versão nova, recarrega uma vez para a mostrar logo.
+  let recarregou = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (recarregou || !navigator.serviceWorker.controller) return;
+    recarregou = true;
+    location.reload();
+  });
+}
 </script>
 </body>
 </html>
