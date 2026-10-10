@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b5345a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>Plano Treino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app de uma coluna (como a Dieta) com separadores no topo; cor por tipo de treino (glúteos / tronco / descanso) */
+:root {
+  --bg: #f6f3f4;
+  --card: #ffffff;
+  --text: #241c20;
+  --muted: #7a6d73;
+  --border: #e9e1e4;
+  --accent: #b5345a;
+  --accent-soft: #f7dde5;
+  --glute: #b5345a;
+  --glute-soft: #f7dde5;
+  --upper: #1f7a8c;
+  --upper-soft: #d7eef2;
+  --rest: #7f7479;
+  --rest-soft: #eeeaec;
+  --ok: #2e9d5b;
+  --over: #d0584a;
+  --on-accent: #ffffff;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151113; --card: #201a1d; --text: #efe7ea; --muted: #9d9096; --border: #33292e;
+    --accent: #e06a8e; --accent-soft: #3d1f29;
+    --glute: #e06a8e; --glute-soft: #3d1f29;
+    --upper: #4fb3c6; --upper-soft: #173339;
+    --rest: #9d9096; --rest-soft: #2a2326;
+    --ok: #48c07a; --over: #e0705f; --on-accent: #1a0d12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+    --bg: #151113; --card: #201a1d; --text: #efe7ea; --muted: #9d9096; --border: #33292e;
+    --accent: #e06a8e; --accent-soft: #3d1f29;
+    --glute: #e06a8e; --glute-soft: #3d1f29;
+    --upper: #4fb3c6; --upper-soft: #173339;
+    --rest: #9d9096; --rest-soft: #2a2326;
+    --ok: #48c07a; --over: #e0705f; --on-accent: #1a0d12;
+    color-scheme: dark;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-body); background: var(--bg); color: var(--text); }
+.t-gluteo { --tone: var(--glute); --tone-soft: var(--glute-soft); }
+.t-tronco { --tone: var(--upper); --tone-soft: var(--upper-soft); }
+.t-ativo, .t-descanso { --tone: var(--rest); --tone-soft: var(--rest-soft); }
+
+header {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3;
+}
+h1 { margin: 0 0 8px; font-size: 1.3rem; }
+h2 { margin: 0 0 12px; font-size: 1.05rem; text-wrap: balance; }
+h1, h2, .big-title, .stat strong { font-family: var(--font-display); }
+nav { display: flex; gap: 6px; max-width: 640px; }
+.tab { flex: 1; padding: 8px 4px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text); cursor: pointer; font: inherit; font-size: .92rem; }
+.tab.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+main { max-width: 640px; margin: 0 auto; padding: 16px 16px 110px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+button, input, select { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); }
+button { cursor: pointer; }
+.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.danger { background: var(--over); color: var(--on-accent); border-color: var(--over); }
+button.block { width: 100%; padding: 12px; font-size: 1rem; font-weight: 600; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.muted { color: var(--muted); }
+.small { font-size: .82rem; }
+.status { font-size: .72rem; color: var(--muted); font-weight: normal; margin-left: 6px; font-family: var(--font-body); }
+
+.day-nav { display: flex; gap: 8px; margin-bottom: 14px; }
+.day-nav input { flex: 1; text-align: center; min-width: 0; }
+.day-nav button { width: 44px; font-size: 1.2rem; }
+
+/* Cabeçalho do treino do dia */
+.hero { border-top: 4px solid var(--tone); }
+.eyebrow { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.big-title { font-size: 1.6rem; font-weight: 700; margin: 4px 0 2px; color: var(--tone); }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+.pill { font-size: .75rem; padding: 3px 9px; border-radius: 999px; background: var(--tone-soft, var(--accent-soft)); color: var(--text); font-variant-numeric: tabular-nums; }
+.bar { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--tone, var(--accent)); transition: width .4s; }
+.bar-txt { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.swap { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: .85rem; color: var(--muted); }
+.swap select { flex: 1; min-width: 0; }
+
+.block-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 18px 4px 8px; }
+.ex { padding: 14px 16px; }
+.ex.done { border-color: var(--tone); }
+.ex-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.ex-name { font-weight: 700; background: none; border: none; padding: 0; text-align: left; color: var(--text); font-size: 1rem; }
+.ex-name::after { content: " ⓘ"; color: var(--muted); font-weight: 400; font-size: .85rem; }
+.ex-presc { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--tone); white-space: nowrap; }
+.ex-sub { font-size: .82rem; color: var(--muted); margin: 3px 0 10px; }
+.sets { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.set { width: 42px; height: 42px; border-radius: 50%; padding: 0; font-weight: 700; font-variant-numeric: tabular-nums; border: 2px solid var(--tone); background: transparent; color: var(--tone); }
+.set.on { background: var(--tone); color: var(--on-accent); }
+.load { flex: 1 1 140px; min-width: 0; font-size: .88rem; }
+.last { font-size: .75rem; color: var(--muted); margin-top: 6px; }
+
+
+.text-card p { margin: 0 0 6px; line-height: 1.5; }
+.text-card ul { margin: 0; padding-left: 18px; line-height: 1.6; }
+.effort { display: flex; gap: 8px; margin: 10px 0 12px; }
+.effort button { flex: 1; }
+.effort button.on { background: var(--tone-soft); border-color: var(--tone); font-weight: 600; }
+.done-badge { text-align: center; color: var(--ok); font-weight: 700; margin-bottom: 10px; }
+
+/* Temporizador de descanso */
+#timer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--text); color: var(--bg); padding: 12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 12px; justify-content: center; }
+#timer strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; font-family: var(--font-display); min-width: 64px; text-align: center; }
+#timer button { background: transparent; color: var(--bg); border-color: var(--muted); }
+#timer .lbl { font-size: .8rem; opacity: .8; }
+
+/* Plano */
+.phases { display: grid; gap: 8px; }
+.phase { display: grid; grid-template-columns: 74px 1fr; gap: 10px; padding: 10px; border-radius: 10px; background: var(--bg); }
+.phase.cur { outline: 2px solid var(--accent); }
+.phase b { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.phase p { margin: 2px 0 0; font-size: .85rem; color: var(--muted); }
+.week { list-style: none; margin: 0; padding: 0; }
+.week li { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--border); cursor: pointer; }
+.week li:first-child { border-top: none; }
+.week .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--tone); flex: none; }
+.week .d { width: 64px; font-size: .85rem; color: var(--muted); flex: none; }
+.week .w { flex: 1; min-width: 0; }
+.week .w div:first-child { font-weight: 600; }
+.week .w div + div { font-size: .8rem; color: var(--muted); }
+.week .ok { color: var(--ok); font-weight: 700; }
+.week li.today .d { color: var(--text); font-weight: 700; }
+
+/* Exercícios */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+.chip { border-radius: 999px; padding: 6px 12px; font-size: .82rem; background: var(--bg); }
+.chip.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 0; border-top: 1px solid var(--border); }
+.list li:first-child { border-top: none; }
+.list li.tap { cursor: pointer; }
+.list .name { font-weight: 600; }
+.list .meta { color: var(--muted); font-size: .8rem; }
+.list .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.empty { color: var(--muted); text-align: center; padding: 16px 0; font-size: .9rem; }
+#q { width: 100%; font-size: 1rem; padding: 12px; }
+
+/* Ecrã de detalhe */
+.sheet { position: fixed; inset: 0; background: var(--bg); z-index: 10; display: flex; flex-direction: column; }
+.sheet-head { display: flex; align-items: center; gap: 8px; padding: 12px; padding-top: calc(12px + env(safe-area-inset-top, 0px)); background: var(--card); border-bottom: 1px solid var(--border); }
+.sheet-head h2 { flex: 1; margin: 0; text-align: center; }
+.icon-btn { width: 40px; height: 40px; border: none; background: transparent; font-size: 1.3rem; padding: 0; color: var(--text); }
+.sheet-body { flex: 1; overflow-y: auto; padding: 16px; max-width: 640px; width: 100%; margin: 0 auto; }
+.kv { display: grid; grid-template-columns: 110px 1fr; gap: 6px 10px; font-size: .9rem; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+ol.steps { padding-left: 20px; line-height: 1.6; margin: 0; }
+body.noscroll { overflow: hidden; }
+
+/* Progresso */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { background: var(--bg); border-radius: 10px; padding: 10px 6px; text-align: center; }
+.stat strong { display: block; font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.stat span { font-size: .72rem; color: var(--muted); }
+.chart { width: 100%; height: auto; display: block; margin-top: 12px; }
+.chart text { fill: var(--muted); font-size: 9px; font-family: var(--font-body); }
+.chart .grid { stroke: var(--border); }
+.chart .goal { stroke: var(--ok); stroke-dasharray: 4 3; }
+.chart .goal-txt { fill: var(--ok); }
+.chart .b { fill: var(--accent); }
+.chart .b.cur { fill: var(--accent-soft); stroke: var(--accent); }
+.grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid-form label { display: flex; flex-direction: column; gap: 4px; font-size: .82rem; color: var(--muted); }
+.grid-form input { min-width: 0; color: var(--text); }
+.grid-form .full { grid-column: 1 / -1; }
+.diff-down { color: var(--ok); }
+.diff-up { color: var(--over); }
+
+#toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: .9rem; opacity: 0; pointer-events: none; transition: .25s; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <h1>🏋️ Plano Treino <span id="syncStatus" class="status"></span></h1>
+  <nav>
+    <button class="tab active" data-tab="hoje">Treino</button>
+    <button class="tab" data-tab="plano">Plano</button>
+    <button class="tab" data-tab="exercicios">Exercícios</button>
+    <button class="tab" data-tab="progresso">Progresso</button>
+  </nav>
+</header>
+
+<main>
+  <section id="hoje" class="panel active">
+    <div class="day-nav">
+      <button id="prevDay" aria-label="Dia anterior">‹</button>
+      <input type="date" id="dayPicker">
+      <button id="nextDay" aria-label="Dia seguinte">›</button>
+    </div>
+    <div id="hojeBody"></div>
+  </section>
+
+  <section id="plano" class="panel"><div id="planoBody"></div></section>
+
+  <section id="exercicios" class="panel">
+    <div class="card">
+      <input type="search" id="q" placeholder="Pesquisar exercício…" autocomplete="off">
+      <div class="chips" id="grupoChips"></div>
+    </div>
+    <div class="card"><ul class="list" id="exList"></ul></div>
+  </section>
+
+  <section id="progresso" class="panel">
+    <div class="card">
+      <h2>Resumo</h2>
+      <div class="stats">
+        <div class="stat"><strong id="sSemana">0/5</strong><span>Esta semana</span></div>
+        <div class="stat"><strong id="sTotal">0</strong><span>Treinos feitos</span></div>
+        <div class="stat"><strong id="sProg">1</strong><span>Semana do plano</span></div>
+      </div>
+      <svg id="weekChart" class="chart" viewBox="0 0 320 150" role="img" aria-label="Treinos concluídos por semana"></svg>
+    </div>
+    <div class="card">
+      <h2>Medidas</h2>
+      <form id="medForm" class="grid-form">
+        <label class="full">Data <input type="date" id="mData" required></label>
+        <label>Peso (kg) <input type="number" id="mPeso" step="0.1" min="30" max="300"></label>
+        <label>Cintura (cm) <input type="number" id="mCintura" step="0.5" min="40" max="200"></label>
+        <label>Anca (cm) <input type="number" id="mAnca" step="0.5" min="40" max="200"></label>
+        <label>Coxa (cm) <input type="number" id="mCoxa" step="0.5" min="20" max="120"></label>
+        <button type="submit" class="primary full">Guardar medidas</button>
+      </form>
+      <p class="small muted">Mede de 2 em 2 semanas, de manhã e em jejum. Na tonificação, os centímetros mostram mais do que a balança.</p>
+      <ul class="list" id="medList"></ul>
+    </div>
+    <div class="card">
+      <h2>Histórico</h2>
+      <ul class="list" id="histList"></ul>
+    </div>
+    <div class="card">
+      <h2>Definições</h2>
+      <form id="setForm" class="grid-form">
+        <label class="full">Início do plano (segunda-feira da semana 1) <input type="date" id="inicio" required></label>
+        <button type="submit" class="full">Guardar</button>
+      </form>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button id="resetBtn" class="danger">Apagar todos os dados</button>
+        <button id="resetCancel" hidden>Cancelar</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="timer" hidden>
+  <div><div class="lbl">Descanso</div><strong id="tLeft">0:00</strong></div>
+  <button id="tPlus">+15 s</button>
+  <button id="tSkip">Saltar</button>
+</div>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-head">
+    <span style="width:40px"></span>
+    <h2 id="sheetTitle"></h2>
+    <button id="sheetClose" class="icon-btn" aria-label="Fechar">✕</button>
+  </div>
+  <div id="sheetBody" class="sheet-body"></div>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+// ---------- Exercícios ----------
+// Cada exercício: nome, grupo, músculos, material, passos de execução, versão mais fácil e mais difícil.
+const GRUPOS = ["Glúteos e pernas", "Costas e bíceps", "Ombros, peito e tríceps", "Abdominais", "Cardio e mobilidade"];
+const EX = {
+  monster: { nome: "Monster walk com banda", grupo: 0, musc: "Glúteo médio", equip: "Banda de tecido",
+    dicas: ["Banda acima dos joelhos (ou nos tornozelos para mais intensidade).", "Meio agachamento, peito alto, peso nos calcanhares.", "Dá passos laterais curtos sem deixar os joelhos caírem para dentro.", "Mantém a banda sempre esticada."],
+    facil: "Banda acima dos joelhos, passos mais curtos", dificil: "Banda nos tornozelos e agachamento mais baixo" },
+  clam: { nome: "Clamshell com banda", grupo: 0, musc: "Glúteo médio", equip: "Banda, tapete",
+    dicas: ["Deitada de lado, joelhos fletidos a 45°, banda acima dos joelhos.", "Pés juntos; abre o joelho de cima sem rodar a anca para trás.", "Pausa 1 s em cima e desce devagar."],
+    facil: "Sem banda", dificil: "Banda mais forte e pausa de 3 s" },
+  abdLado: { nome: "Abdução de anca deitada de lado", grupo: 0, musc: "Glúteo médio e mínimo", equip: "Banda, tapete",
+    dicas: ["Deitada de lado, perna de baixo fletida, banda nos tornozelos.", "Sobe a perna de cima esticada, com o pé ligeiramente virado para baixo.", "Não deixes a anca rodar para trás."],
+    facil: "Sem banda", dificil: "Banda forte + halter 3 kg na coxa" },
+  ponteBanda: { nome: "Ponte de glúteos com banda", grupo: 0, musc: "Glúteo máximo", equip: "Banda, tapete",
+    dicas: ["Deitada de costas, pés à largura da anca, banda acima dos joelhos.", "Empurra pelos calcanhares e sobe até alinhar ombros, anca e joelhos.", "Aperta os glúteos 2 s em cima e afasta os joelhos contra a banda."],
+    facil: "Sem banda", dificil: "Disco de 10 kg na anca" },
+  fireHyd: { nome: "Fire hydrant com banda", grupo: 0, musc: "Glúteo médio", equip: "Banda, tapete",
+    dicas: ["Em quatro apoios, banda acima dos joelhos.", "Abre a perna para o lado com o joelho fletido, sem inclinar o tronco.", "Desce devagar."],
+    facil: "Sem banda", dificil: "Estica a perna no topo (fire hydrant com extensão)" },
+  hipThrust: { nome: "Hip thrust com discos", grupo: 0, musc: "Glúteo máximo, isquiotibiais", equip: "Discos 10 kg, sofá ou cama",
+    dicas: ["Parte superior das costas apoiada na beira do sofá, discos sobre a anca (usa uma toalha dobrada por baixo).", "Pés à largura da anca; em cima, as canelas ficam na vertical.", "Queixo ao peito e costelas para baixo; sobe empurrando pelos calcanhares.", "Aperta os glúteos 1–2 s em cima, sem arquear a lombar.", "Sentes nos quadríceps? Afasta os pés. Sentes nos isquiotibiais? Aproxima-os."],
+    facil: "Ponte de glúteos no chão com 1 disco", dificil: "2 discos + banda nos joelhos, pausa de 3 s" },
+  rdlKb: { nome: "Peso morto romeno com kettlebell", grupo: 0, musc: "Glúteos, isquiotibiais", equip: "Kettlebell 12/16 kg",
+    dicas: ["Pés à largura da anca, kettlebell junto às coxas.", "Joelhos ligeiramente fletidos; leva a anca para trás como para fechar uma porta com o rabo.", "Costas direitas; desce até sentires os isquiotibiais a esticar (meio da canela).", "Sobe a empurrar a anca para a frente e a apertar os glúteos, sem inclinar o tronco para trás.", "Se só sentes os isquiotibiais, flete um pouco mais os joelhos e pensa em levar a anca para trás, não o tronco para baixo."],
+    facil: "KB 12 kg ou halteres 5 kg", dificil: "KB 16 kg com 3 s a descer" },
+  sumoKb: { nome: "Agachamento sumo com kettlebell", grupo: 0, musc: "Glúteos, adutores, quadríceps", equip: "Kettlebell 12/16 kg",
+    dicas: ["Pés mais afastados que os ombros, pontas viradas para fora.", "Segura a kettlebell pela pega com os braços esticados.", "Desce com os joelhos na direção dos pés e o peito alto.", "Sobe a empurrar o chão e aperta os glúteos."],
+    facil: "Sem peso", dificil: "Pausa de 2 s em baixo" },
+  ponteUni: { nome: "Ponte de glúteos unilateral", grupo: 0, musc: "Glúteo máximo", equip: "Tapete",
+    dicas: ["Deitada de costas, uma perna fletida e a outra esticada no ar.", "Sobe a anca empurrando pelo calcanhar de apoio.", "Mantém a anca nivelada, sem descair para um lado."],
+    facil: "Ponte com as duas pernas", dificil: "Halter 5 kg na anca ou ombros no sofá" },
+  pulseHT: { nome: "Pulsos de hip thrust com banda", grupo: 0, musc: "Glúteo máximo", equip: "Banda, disco 10 kg",
+    dicas: ["Posição de hip thrust, banda acima dos joelhos.", "Fica em cima e faz pequenos movimentos de 5–10 cm sem descer.", "Joelhos sempre a empurrar a banda para fora."],
+    facil: "Sem disco", dificil: "2 discos" },
+  bulgaro: { nome: "Agachamento búlgaro", grupo: 0, musc: "Glúteos, quadríceps", equip: "Halteres 3/5 kg, cadeira",
+    dicas: ["Pé de trás apoiado numa cadeira, pé da frente um passo largo à frente.", "Mais glúteo: pé da frente mais longe da cadeira e tronco inclinado à frente (30–45°). Passo curto e tronco direito puxam mais pelo quadríceps.", "Desce a direito até a coxa da frente ficar quase paralela ao chão.", "Sobe a empurrar pelo calcanhar da frente."],
+    facil: "Sem peso e com apoio numa parede", dificil: "Halteres 5 kg e 3 s a descer" },
+  rdlUni: { nome: "Peso morto romeno unilateral", grupo: 0, musc: "Glúteos, isquiotibiais, equilíbrio", equip: "Kettlebell 12/16 kg",
+    dicas: ["Kettlebell na mão do lado oposto à perna de apoio.", "Leva a perna livre para trás enquanto o tronco desce, como uma balança.", "Anca nivelada, virada para o chão.", "Sobe a apertar o glúteo da perna de apoio."],
+    facil: "Halter 5 kg e ponta do pé de trás no chão", dificil: "KB 16 kg" },
+  afundoTras: { nome: "Afundo à retaguarda", grupo: 0, musc: "Glúteos, quadríceps", equip: "Halteres 3/5 kg",
+    dicas: ["Em pé, dá um passo largo para trás.", "Desce até o joelho de trás quase tocar no chão.", "Tronco ligeiramente inclinado à frente; volta empurrando pelo calcanhar da frente."],
+    facil: "Sem peso", dificil: "Halteres 5 kg ou pé da frente sobre 1 disco" },
+  stepUp: { nome: "Step-up", grupo: 0, musc: "Glúteos, quadríceps", equip: "Halteres, cadeira ou degrau firme",
+    dicas: ["Pé inteiro em cima de uma cadeira estável ou degrau.", "Sobe usando só a perna de cima, sem dar impulso com a de baixo.", "Inclina o tronco à frente sobre a perna de cima para trabalhar mais o glúteo.", "Desce devagar, controlando."],
+    facil: "Degrau mais baixo, sem peso", dificil: "Halteres 5 kg e descida em 3 s" },
+  coice: { nome: "Coice de glúteo com banda", grupo: 0, musc: "Glúteo máximo", equip: "Banda, tapete",
+    dicas: ["Em quatro apoios, banda à volta dos pés ou acima dos joelhos.", "Empurra um calcanhar em direção ao teto, joelho fletido a 90°.", "Não arqueies a lombar; o movimento é na anca.", "Segura 2 s em cima com o glúteo bem contraído. Movimento lento, sem balanço."],
+    facil: "Sem banda", dificil: "Banda forte + pausa de 2 s em cima" },
+  abdSent: { nome: "Abdução sentada com banda", grupo: 0, musc: "Glúteo médio", equip: "Banda forte",
+    dicas: ["Sentada na beira de uma cadeira, banda acima dos joelhos.", "Abre os joelhos o máximo possível e volta devagar.", "Faz metade das repetições inclinada à frente e metade direita."],
+    facil: "Banda leve", dificil: "Banda forte + 10 pulsos no final" },
+  swing: { nome: "Kettlebell swing", grupo: 0, musc: "Glúteos, isquiotibiais, cardio", equip: "Kettlebell 12/16 kg",
+    dicas: ["Pés à largura dos ombros, kettlebell um pouco à frente.", "Puxa a kettlebell para trás entre as pernas, levando a anca para trás (não é um agachamento).", "Estende a anca com força, aperta os glúteos: a kettlebell sobe até à altura do peito pelo impulso, não pelos braços.", "Costas sempre direitas; expira em cada impulso."],
+    facil: "KB 12 kg ou peso morto com kettlebell", dificil: "KB 16 kg ou swing a uma mão" },
+  goblet: { nome: "Agachamento goblet", grupo: 0, musc: "Quadríceps, glúteos", equip: "Kettlebell 12/16 kg",
+    dicas: ["Segura a kettlebell junto ao peito pelos lados da pega.", "Pés à largura dos ombros, desce entre as pernas mantendo o peito alto.", "Cotovelos por dentro dos joelhos em baixo.", "Sobe a empurrar o chão."],
+    facil: "Agachamento para uma cadeira", dificil: "KB 16 kg com pausa em baixo" },
+  ponteElev: { nome: "Ponte de glúteos com pés elevados", grupo: 0, musc: "Glúteo máximo, isquiotibiais", equip: "Discos 10 kg, cadeira ou sofá",
+    dicas: ["Deitada no tapete, calcanhares em cima de uma cadeira ou sofá.", "Disco sobre a anca, segura-o com as mãos.", "Sobe a anca até alinhar com os joelhos e aperta os glúteos."],
+    facil: "Pés no chão", dificil: "2 discos + banda nos joelhos" },
+  afundoLat: { nome: "Afundo lateral com kettlebell", grupo: 0, musc: "Glúteos, adutores", equip: "Kettlebell 12 kg",
+    dicas: ["Pés juntos, kettlebell ao peito.", "Dá um passo largo para o lado e senta-te nessa perna, com a outra esticada.", "Anca para trás, peito alto; volta empurrando o chão."],
+    facil: "Sem peso", dificil: "KB 16 kg" },
+  frog: { nome: "Frog pump com banda", grupo: 0, musc: "Glúteo máximo", equip: "Banda, tapete",
+    dicas: ["Deitada de costas, plantas dos pés juntas e joelhos abertos.", "Sobe a anca rapidamente, aperta os glúteos 1 s e desce.", "Repetições rápidas e controladas."],
+    facil: "Sem banda", dificil: "Disco 10 kg na anca" },
+  hiit: { nome: "Circuito HIIT final", grupo: 4, musc: "Corpo inteiro, cardio", equip: "Kettlebell 12 kg, tapete",
+    dicas: ["30 s a trabalhar, 30 s de pausa; repete a sequência até acabar o tempo:", "1) Agachamento com salto (ou agachamento rápido sem salto)", "2) Mountain climbers", "3) Kettlebell swing 12 kg", "4) Saltar à corda (sem corda: simula o movimento com saltos baixos)", "Mantém um ritmo em que consegues falar com dificuldade."],
+    facil: "Sem saltos, 20 s ativo / 40 s pausa", dificil: "40 s ativo / 20 s pausa" },
+
+  tabata: { nome: "Tabata de glúteos com banda", grupo: 0, musc: "Glúteos, cardio", equip: "Banda, tapete",
+    dicas: ["8 rondas de 20 s no máximo com 10 s de pausa (4 min no total).", "Rondas ímpares: agachamento com a banda acima dos joelhos.", "Rondas pares: ponte de glúteos com banda, rápida e com aperto em cima.", "Joelhos sempre a empurrar a banda para fora. Tenta manter na 8.ª ronda as repetições da 1.ª."],
+    facil: "Sem banda, ou 20 s de trabalho com 20 s de pausa", dificil: "Agachamento com salto nas rondas ímpares" },
+
+  pullApart: { nome: "Pull-apart com banda", grupo: 1, musc: "Deltoide posterior, romboides", equip: "Banda leve",
+    dicas: ["Banda à volta dos pulsos, braços esticados à frente à altura dos ombros.", "Afasta as mãos, juntando as omoplatas.", "Controla o regresso."],
+    facil: "Banda mais leve", dificil: "Pausa de 2 s com os braços abertos" },
+  remadaCurv: { nome: "Remada curvada com halteres", grupo: 1, musc: "Dorsais, romboides, bíceps", equip: "Halteres 3/5 kg",
+    dicas: ["Tronco inclinado a 45°, joelhos fletidos, costas direitas.", "Puxa os halteres em direção à anca, cotovelos junto ao corpo.", "Aperta as omoplatas em cima e desce devagar."],
+    facil: "Halteres 3 kg", dificil: "Halteres 5 kg com pausa de 1 s em cima" },
+  remadaUni: { nome: "Remada unilateral com kettlebell", grupo: 1, musc: "Dorsal, romboides", equip: "Kettlebell 12/16 kg, cadeira",
+    dicas: ["Mão e joelho do mesmo lado apoiados numa cadeira ou sofá.", "Puxa a kettlebell em direção ao bolso, cotovelo a raspar no corpo.", "Não rodes o tronco para ajudar."],
+    facil: "KB 12 kg", dificil: "KB 16 kg, 3 s a descer" },
+  pullover: { nome: "Pullover no chão", grupo: 1, musc: "Dorsais, peito, abdominais", equip: "Halter 5 kg ou KB 12 kg, tapete",
+    dicas: ["Deitada de costas, joelhos fletidos, halter seguro com as duas mãos acima do peito.", "Leva-o para trás da cabeça com os braços quase esticados, sem arquear a lombar.", "Volta à posição inicial puxando com as costas."],
+    facil: "Halter 3 kg", dificil: "KB 12 kg" },
+  superman: { nome: "Superman Y-T", grupo: 1, musc: "Lombar, trapézio médio e inferior", equip: "Tapete",
+    dicas: ["Deitada de barriga para baixo, testa apoiada.", "Levanta os braços em Y, segura 2 s; depois em T, segura 2 s.", "Olhar para o chão, pescoço neutro."],
+    facil: "Só os braços em Y", dificil: "Halteres 1–3 kg ou garrafas de água" },
+  curl: { nome: "Curl de bíceps alternado", grupo: 1, musc: "Bíceps", equip: "Halteres 3/5 kg",
+    dicas: ["Em pé, cotovelos colados ao corpo.", "Sobe um halter rodando a palma para cima; desce em 2–3 s.", "Não balances o tronco."],
+    facil: "Halteres 3 kg", dificil: "Halteres 5 kg, 3 s a descer" },
+  martelo: { nome: "Curl martelo", grupo: 1, musc: "Bíceps, antebraço", equip: "Halteres 3/5 kg",
+    dicas: ["Palmas viradas uma para a outra durante todo o movimento.", "Sobe os dois halteres ao mesmo tempo, cotovelos fixos.", "Desce devagar."],
+    facil: "Halteres 3 kg", dificil: "Halteres 5 kg" },
+
+  flexoes: { nome: "Flexões", grupo: 2, musc: "Peito, tríceps, ombros, core", equip: "Tapete",
+    dicas: ["Mãos um pouco mais afastadas que os ombros.", "Corpo em linha reta da cabeça aos joelhos (ou pés): aperta glúteos e abdominais.", "Desce o peito até perto do chão com os cotovelos a 45° do corpo.", "Empurra o chão para subir."],
+    facil: "Flexões inclinadas com as mãos no sofá", dificil: "Flexões completas com 3 s a descer" },
+  floorPress: { nome: "Supino no chão com halteres", grupo: 2, musc: "Peito, tríceps", equip: "Halteres 5 kg, tapete",
+    dicas: ["Deitada no tapete, joelhos fletidos, halteres acima do peito.", "Desce até os cotovelos tocarem levemente no chão.", "Empurra para cima e junta os halteres em cima."],
+    facil: "Halteres 3 kg", dificil: "Halteres 5 kg, pausa de 2 s em baixo" },
+  press: { nome: "Press de ombros com halteres", grupo: 2, musc: "Ombros, tríceps", equip: "Halteres 3/5 kg",
+    dicas: ["Em pé ou sentada, halteres à altura dos ombros, palmas para a frente.", "Empurra para cima até os braços quase esticarem.", "Abdominais contraídos para não arquear a lombar."],
+    facil: "Sentada, halteres 3 kg", dificil: "Halteres 5 kg, um braço de cada vez" },
+  elevLat: { nome: "Elevações laterais", grupo: 2, musc: "Deltoide lateral", equip: "Halteres 3 kg",
+    dicas: ["Em pé, halteres ao lado do corpo, cotovelos ligeiramente fletidos.", "Sobe os braços para os lados até à altura dos ombros.", "Desce em 3 s. Ombros longe das orelhas."],
+    facil: "Garrafas de água de 1,5 L", dificil: "Pausa de 1 s em cima" },
+  tricepsKb: { nome: "Extensão de tríceps acima da cabeça", grupo: 2, musc: "Tríceps", equip: "Halter 5 kg ou KB 12 kg",
+    dicas: ["Segura o peso com as duas mãos acima da cabeça.", "Dobra os cotovelos levando o peso para trás da cabeça; cotovelos apontados para o teto.", "Estica os braços sem abrir os cotovelos."],
+    facil: "Halter 3 kg", dificil: "KB 12 kg, 3 s a descer" },
+  fundos: { nome: "Fundos de tríceps numa cadeira", grupo: 2, musc: "Tríceps", equip: "Cadeira estável",
+    dicas: ["Mãos na beira da cadeira, dedos para a frente, rabo junto à cadeira.", "Dobra os cotovelos para trás (não para os lados) até 90°.", "Empurra para subir."],
+    facil: "Joelhos fletidos e pés perto", dificil: "Pernas esticadas" },
+
+  urso: { nome: "Prancha de urso com toques no ombro", grupo: 3, musc: "Abdominais profundos, ombros", equip: "Tapete",
+    dicas: ["Em quatro apoios, mãos debaixo dos ombros e joelhos debaixo da anca.", "Levanta os joelhos 2–3 cm do chão; costas planas como uma mesa.", "Toca no ombro oposto alternando as mãos, sem balançar a anca.", "Respira devagar e mantém os abdominais apertados."],
+    facil: "Só manter a posição, sem toques", dificil: "Andar 2 passos à frente e 2 atrás em posição de urso" },
+  prancha: { nome: "Prancha", grupo: 3, musc: "Abdominais, core", equip: "Tapete",
+    dicas: ["Antebraços no chão, cotovelos debaixo dos ombros.", "Corpo em linha reta, glúteos e abdominais contraídos.", "Respira normalmente; não deixes a anca descer."],
+    facil: "Prancha com joelhos no chão", dificil: "Toques alternados no ombro" },
+  deadBug: { nome: "Dead bug", grupo: 3, musc: "Abdominais profundos", equip: "Tapete",
+    dicas: ["Deitada de costas, braços para o teto, joelhos a 90° no ar.", "Cola a lombar ao chão.", "Estica o braço e a perna opostos devagar, sem a lombar descolar; volta e troca."],
+    facil: "Só as pernas", dificil: "Halter 3 kg nas mãos" },
+  bicicleta: { nome: "Abdominal bicicleta", grupo: 3, musc: "Oblíquos, reto abdominal", equip: "Tapete",
+    dicas: ["Deitada, mãos atrás da cabeça sem puxar o pescoço.", "Leva o cotovelo ao joelho oposto enquanto esticas a outra perna.", "Movimento lento e controlado; conta cada lado."],
+    facil: "Pés no chão, só rotação do tronco", dificil: "Mais lento, 2 s por lado" },
+  russian: { nome: "Russian twist", grupo: 3, musc: "Oblíquos", equip: "Halter 3/5 kg",
+    dicas: ["Sentada, joelhos fletidos, tronco inclinado para trás com as costas direitas.", "Roda o tronco de um lado para o outro levando o peso ao lado da anca.", "Pés no chão para mais estabilidade."],
+    facil: "Sem peso, pés no chão", dificil: "Halter 5 kg com pés no ar" },
+  pranchaLat: { nome: "Prancha lateral", grupo: 3, musc: "Oblíquos, glúteo médio", equip: "Tapete",
+    dicas: ["Apoiada num antebraço, cotovelo debaixo do ombro.", "Sobe a anca e mantém o corpo em linha reta.", "Troca de lado."],
+    facil: "Joelhos fletidos no chão", dificil: "Elevar a perna de cima" },
+  elevPernas: { nome: "Elevação de pernas deitada", grupo: 3, musc: "Abdominais inferiores", equip: "Tapete",
+    dicas: ["Deitada de costas, mãos debaixo do rabo.", "Sobe as pernas esticadas até 90° e desce devagar sem tocar no chão.", "Lombar sempre colada ao chão."],
+    facil: "Joelhos fletidos", dificil: "Descer em 4 s" },
+
+  caminhada: { nome: "Caminhada rápida", grupo: 4, musc: "Cardio", equip: "Ténis",
+    dicas: ["Ritmo em que consegues falar mas não cantar.", "Se possível, inclui subidas.", "Objetivo diário: 8 000–10 000 passos, também nos dias de treino."],
+    facil: "20–30 min", dificil: "45–60 min com subidas" },
+  along: { nome: "Alongamentos e mobilidade", grupo: 4, musc: "Anca, costas, pernas", equip: "Tapete",
+    dicas: ["Pombo (glúteos): 40 s por lado.", "Flexores da anca em afundo ajoelhado: 40 s por lado.", "Isquiotibiais sentada: 40 s.", "Gato-vaca: 10 repetições.", "Postura da criança: 60 s."],
+    facil: "5 min", dificil: "15 min" },
+};
+
+// ---------- Treinos ----------
+// s = séries por fase (3 em todos os exercícios exceto ativação) [readaptação, construção, intensificação]; reps e carga podem variar por fase.
+const TREINOS = {
+  GA: { nome: "Glúteos A", sub: "Força: hip thrust e dobradiça da anca", tipo: "gluteo", min: 45, blocos: [
+    { titulo: "Ativação", itens: [
+      { ex: "monster", s: [2, 2, 2], reps: "12 passos/lado", rest: 30, carga: "Banda média" },
+      { ex: "clam", s: [2, 2, 2], reps: "15/lado", rest: 30, carga: "Banda média" } ] },
+    { titulo: "Principal", itens: [
+      { ex: "hipThrust", s: [3, 3, 3], reps: ["12", "10–12", "8–10"], rest: 90, carga: ["1 disco 10 kg", "2 discos (20 kg)", "2 discos + banda nos joelhos"] },
+      { ex: "rdlKb", s: [3, 3, 3], reps: "12", rest: 90, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg, 3 s a descer"] },
+      { ex: "sumoKb", s: [3, 3, 3], reps: "12–15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg + pausa em baixo"] },
+      { ex: "ponteUni", s: [3, 3, 3], reps: "12/perna, 2 s em cima", rest: 45, carga: ["Peso corporal", "Peso corporal", "Halter 5 kg na anca"] } ] },
+    { titulo: "Finalizador", itens: [
+      { ex: "abdLado", s: [3, 3, 3], reps: "15/lado, 2 s em cima", rest: 30, carga: "Banda média" },
+      { ex: "pulseHT", s: [3, 3, 3], reps: "30–40 s", rest: 30, carga: "Banda + 1 disco 10 kg" } ] } ] },
+  TA: { nome: "Tronco A", sub: "Costas, bíceps e abdominais", tipo: "tronco", min: 40, blocos: [
+    { titulo: "Ativação", itens: [
+      { ex: "pullApart", s: [2, 2, 2], reps: "15", rest: 30, carga: "Banda leve" } ] },
+    { titulo: "Principal", itens: [
+      { ex: "remadaCurv", s: [3, 3, 3], reps: "12", rest: 75, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg, pausa em cima"] },
+      { ex: "remadaUni", s: [3, 3, 3], reps: "10/braço", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg, 3 s a descer"] },
+      { ex: "pullover", s: [3, 3, 3], reps: "12", rest: 60, carga: ["Halter 5 kg", "Halter 5 kg", "KB 12 kg"] },
+      { ex: "curl", s: [3, 3, 3], reps: "12/braço", rest: 60, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg"] },
+      { ex: "martelo", s: [3, 3, 3], reps: "12–15", rest: 45, carga: ["Halteres 3 kg", "Halteres 3–5 kg", "Halteres 5 kg"] },
+      { ex: "superman", s: [3, 3, 3], reps: "10", rest: 45, carga: "Peso corporal" } ] },
+    { titulo: "Abdominais", itens: [
+      { ex: "prancha", s: [3, 3, 3], reps: ["20–30 s", "30–40 s", "45 s"], rest: 30, carga: "Peso corporal" },
+      { ex: "deadBug", s: [3, 3, 3], reps: "8/lado", rest: 30, carga: ["Peso corporal", "Peso corporal", "Halter 3 kg"] },
+      { ex: "bicicleta", s: [3, 3, 3], reps: "20", rest: 30, carga: "Peso corporal" } ] } ] },
+  GB: { nome: "Glúteos B", sub: "Unilateral: búlgaro, afundos e step-up", tipo: "gluteo", min: 45, blocos: [
+    { titulo: "Ativação", itens: [
+      { ex: "ponteBanda", s: [2, 2, 2], reps: "15", rest: 30, carga: "Banda média" },
+      { ex: "fireHyd", s: [2, 2, 2], reps: "12/lado", rest: 30, carga: "Banda média" } ] },
+    { titulo: "Principal", itens: [
+      { ex: "bulgaro", s: [3, 3, 3], reps: "10/perna", rest: 75, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
+      { ex: "rdlUni", s: [3, 3, 3], reps: "10/perna", rest: 60, carga: ["Halter 5 kg", "KB 12 kg", "KB 16 kg"] },
+      { ex: "afundoTras", s: [3, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
+      { ex: "stepUp", s: [3, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] } ] },
+    { titulo: "Finalizador", itens: [
+      { ex: "coice", s: [3, 3, 3], reps: "10/perna, 2 s em cima", rest: 30, carga: "Banda média" },
+      { ex: "abdSent", s: [3, 3, 3], reps: "20", rest: 30, carga: "Banda forte" },
+      { ex: "tabata", s: [1, 1, 1], reps: "4 min", rest: 0, carga: "20 s ativo / 10 s pausa × 8" } ] } ] },
+  TB: { nome: "Tronco B", sub: "Ombros, peito, tríceps e abdominais", tipo: "tronco", min: 40, blocos: [
+    { titulo: "Principal", itens: [
+      { ex: "flexoes", s: [3, 3, 3], reps: ["6–8", "8–10", "10–12"], rest: 60, carga: ["Joelhos no chão", "Joelhos ou completas", "Completas"] },
+      { ex: "floorPress", s: [3, 3, 3], reps: "12", rest: 60, carga: ["Halteres 5 kg", "Halteres 5 kg", "Halteres 5 kg, 3 s a descer"] },
+      { ex: "press", s: [3, 3, 3], reps: "10–12", rest: 60, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg"] },
+      { ex: "elevLat", s: [3, 3, 3], reps: "12–15", rest: 45, carga: "Halteres 3 kg" },
+      { ex: "tricepsKb", s: [3, 3, 3], reps: "12", rest: 45, carga: ["Halter 5 kg", "KB 12 kg", "KB 12 kg"] },
+      { ex: "fundos", s: [3, 3, 3], reps: ["8", "10", "12"], rest: 45, carga: "Peso corporal" } ] },
+    { titulo: "Abdominais", itens: [
+      { ex: "russian", s: [3, 3, 3], reps: "20", rest: 30, carga: ["Sem peso", "Halter 3 kg", "Halter 5 kg"] },
+      { ex: "pranchaLat", s: [3, 3, 3], reps: ["15–20 s/lado", "25 s/lado", "30–40 s/lado"], rest: 30, carga: "Peso corporal" },
+      { ex: "elevPernas", s: [3, 3, 3], reps: "10–12", rest: 30, carga: "Peso corporal" },
+      { ex: "urso", s: [3, 3, 3], reps: ["16 toques", "20 toques", "24 toques"], rest: 30, carga: "Peso corporal" } ] } ] },
+  GC: { nome: "Glúteos C", sub: "Kettlebell e cardio para queimar", tipo: "gluteo", min: 40, blocos: [
+    { titulo: "Ativação", itens: [
+      { ex: "monster", s: [2, 2, 2], reps: "12 passos/lado", rest: 30, carga: "Banda média" } ] },
+    { titulo: "Principal", itens: [
+      { ex: "swing", s: [3, 3, 3], reps: "15", rest: 45, carga: ["KB 12 kg", "KB 12 → 16 kg", "KB 16 kg"] },
+      { ex: "goblet", s: [3, 3, 3], reps: "15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg"] },
+      { ex: "ponteElev", s: [3, 3, 3], reps: "15", rest: 45, carga: ["1 disco 10 kg", "2 discos (20 kg)", "2 discos + banda"] },
+      { ex: "afundoLat", s: [3, 3, 3], reps: "10/lado", rest: 45, carga: ["Peso corporal", "KB 12 kg", "KB 12 kg"] },
+      { ex: "frog", s: [3, 3, 3], reps: "20–25", rest: 30, carga: "Banda média" } ] },
+    { titulo: "Finalizador", itens: [
+      { ex: "hiit", s: [1, 1, 1], reps: ["6 min", "8 min", "10 min"], rest: 0, carga: "30 s ativo / 30 s pausa" } ] } ] },
+  ATIVO: { nome: "Descanso ativo", sub: "Caminhada e mobilidade", tipo: "ativo", min: 45, blocos: [
+    { titulo: "Hoje", itens: [
+      { ex: "caminhada", s: [1, 1, 1], reps: "30–45 min", rest: 0, carga: "Ritmo rápido" },
+      { ex: "along", s: [1, 1, 1], reps: "10 min", rest: 0, carga: "Tapete" } ] } ] },
+  OFF: { nome: "Descanso", sub: "Recuperação total", tipo: "descanso", min: 0, blocos: [] },
+};
+const FORCA = ["GA", "TA", "GB", "TB", "GC"]; // contam para a meta de 5 por semana
+const SEMANA = ["GA", "TA", "GB", "TB", "GC", "ATIVO", "OFF"]; // segunda a domingo
+const DIAS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+
+const AQUECIMENTO = {
+  gluteo: "5 min: marcha no lugar, 10 rotações de anca para cada lado, 10 agachamentos sem peso, 10 good mornings e 10 pontes de glúteos.",
+  tronco: "5 min: marcha no lugar, 10 círculos de braços para a frente e para trás, 10 gato-vaca, 10 rotações do tronco e 5 flexões inclinadas no sofá.",
+};
+const CALMA = "5 min de alongamentos: pombo, flexores da anca, isquiotibiais e peito na parede (40 s cada). Bebe água.";
+
+const FASES = [
+  { nome: "Readaptação", semanas: "Sem. 1–2", txt: "Cargas leves. Foca-te na técnica e acaba cada exercício com 3–4 repetições ainda em reserva." },
+  { nome: "Construção", semanas: "Sem. 3–6", txt: "Cargas maiores (KB 16 kg, 2 discos). As últimas 2 repetições devem custar." },
+  { nome: "Intensificação", semanas: "Sem. 7–10", txt: "Descidas lentas (3 s) e pausas no topo. Termina cada série a 1–2 repetições da falha." },
+  { nome: "Descarga", semanas: "Sem. 11", txt: "Semana leve para recuperar, com as cargas da readaptação. Depois o ciclo recomeça na Construção com as cargas novas." },
+];
+
+// ---------- Estado / armazenamento ----------
+const STORE_KEY = "planoTreino.v1";
+const defaultState = {
+  inicio: "2026-10-12",  // segunda-feira da semana 1
+  treinos: {},           // { "2026-10-12": { tipo, series: {ex: [bool]}, cargas: {ex: "texto"}, concluido, esforco } }
+  cargas: {},            // última carga usada por exercício
+  medidas: [],           // [{ data, peso, cintura, anca, coxa }]
+};
+function load(raw) {
+  try {
+    const s = { ...structuredClone(defaultState), ...JSON.parse(raw ?? localStorage.getItem(STORE_KEY)) };
+    s.treinos ||= {}; s.cargas ||= {}; s.medidas ||= [];
+    return s;
+  } catch { return structuredClone(defaultState); }
+}
+let cloudRef = null, saveTimer = null, saving = false, dirty = false;
+function setStatus(t) { $("#syncStatus").textContent = t; }
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {}
+  if (!cloudRef) return;
+  dirty = true;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flush, 800);
+}
+async function flush() {
+  if (saving || !dirty || !cloudRef) return;
+  saving = true; dirty = false;
+  setStatus("a guardar…");
+  try {
+    await cloudRef.set({ json: JSON.stringify(state) });
+    setStatus("guardado na conta");
+  } catch (e) {
+    const code = e && e.code;
+    setStatus(code === "invalid_argument" ? "guardado só neste browser" : "erro ao guardar");
+    if (code === "invalid_argument") cloudRef = null;
+  }
+  saving = false;
+  if (dirty) flush();
+}
+async function initCloud() {
+  if (!window.claude || !window.claude.use) return;
+  try {
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db || !user) return;
+    const id = await user.id();
+    if (!id) return;
+    const ref = db.doc("data/users/" + id + "/treino");
+    const snap = await ref.get();
+    if (snap.exists && snap.data().json) {
+      try { localStorage.setItem(STORE_KEY, snap.data().json); } catch {}
+      state = load(snap.data().json);
+      renderAll();
+    }
+    cloudRef = ref;
+    setStatus("guardado na conta");
+    if (!snap.exists) { dirty = true; flush(); }
+  } catch {}
+}
+
+// ---------- Utilitários ----------
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+function todayISO(d = new Date()) {
+  const off = d.getTimezoneOffset() * 60000;
+  return new Date(d - off).toISOString().slice(0, 10);
+}
+function shiftDay(iso, n) {
+  const d = new Date(iso + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return todayISO(d);
+}
+const weekday = (iso) => (new Date(iso + "T12:00:00").getDay() + 6) % 7; // 0 = segunda
+const mondayOf = (iso) => shiftDay(iso, -weekday(iso));
+const fmtDate = (iso, opts = { weekday: "short", day: "numeric", month: "short" }) =>
+  new Date(iso + "T12:00:00").toLocaleDateString("pt-PT", opts);
+const pick = (v, f) => (Array.isArray(v) ? v[f] : v);
+
+function semanaPlano(iso) {
+  const ms = new Date(mondayOf(iso) + "T12:00:00") - new Date(mondayOf(state.inicio) + "T12:00:00");
+  return Math.max(1, Math.round(ms / 864e5 / 7) + 1);
+}
+// Devolve { semana, fase (índice em FASES), serie (índice nos arrays s/reps/carga) }
+function faseDe(iso) {
+  const w = semanaPlano(iso);
+  const c = ((w - 1) % 11) + 1; // ciclo de 11 semanas; depois do 1.º ciclo começa na Construção
+  if (w > 11 && c <= 2) return { semana: w, fase: 1, serie: 1 };
+  if (c <= 2) return { semana: w, fase: 0, serie: 0 };
+  if (c <= 6) return { semana: w, fase: 1, serie: 1 };
+  if (c <= 10) return { semana: w, fase: 2, serie: 2 };
+  return { semana: w, fase: 3, serie: 0 };
+}
+function registo(iso) { return state.treinos[iso]; }
+function getRegisto(iso) {
+  if (!state.treinos[iso]) state.treinos[iso] = { series: {}, cargas: {}, concluido: false, esforco: null };
+  return state.treinos[iso];
+}
+const tipoDe = (iso) => registo(iso)?.tipo || SEMANA[weekday(iso)];
+function totalSeries(t, f) { return t.blocos.flatMap((b) => b.itens).reduce((n, it) => n + it.s[f], 0); }
+function seriesFeitas(t, f, reg) {
+  if (!reg) return 0;
+  return t.blocos.flatMap((b) => b.itens).reduce((n, it) => n + (reg.series[it.ex] || []).slice(0, it.s[f]).filter(Boolean).length, 0);
+}
+function concluidosNaSemana(monday) {
+  let n = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = shiftDay(monday, i), r = registo(d);
+    if (r?.concluido && FORCA.includes(r.tipo || SEMANA[i])) n++;
+  }
+  return n;
+}
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast.h);
+  toast.h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+let state = load();
+let currentDay = todayISO();
+
+// ---------- Temporizador de descanso ----------
+let tEnd = 0, tTick = null, audio = null;
+function beep() {
+  try {
+    audio ||= new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.25, 0.5].forEach((dt) => {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(0.2, audio.currentTime + dt);
+      g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + dt + 0.2);
+      o.start(audio.currentTime + dt); o.stop(audio.currentTime + dt + 0.2);
+    });
+  } catch {}
+  try { navigator.vibrate?.([200, 100, 200]); } catch {}
+}
+function startTimer(sec) {
+  if (!sec) return;
+  try { audio ||= new (window.AudioContext || window.webkitAudioContext)(); audio.resume?.(); } catch {}
+  tEnd = Date.now() + sec * 1000;
+  $("#timer").hidden = false;
+  clearInterval(tTick);
+  tTick = setInterval(drawTimer, 250);
+  drawTimer();
+}
+function stopTimer() { clearInterval(tTick); $("#timer").hidden = true; }
+function drawTimer() {
+  const left = Math.max(0, Math.ceil((tEnd - Date.now()) / 1000));
+  $("#tLeft").textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+  if (left <= 0) { stopTimer(); beep(); toast("Descanso terminado. Próxima série!"); }
+}
+$("#tPlus").onclick = () => { tEnd += 15000; drawTimer(); };
+$("#tSkip").onclick = stopTimer;
+
+let wakeLock = null;
+async function keepAwake() {
+  try { if (!wakeLock && navigator.wakeLock) { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => (wakeLock = null)); } } catch {}
+}
+
+// ---------- Render: Treino do dia ----------
+function renderHoje() {
+  $("#dayPicker").value = currentDay;
+  const key = tipoDe(currentDay);
+  const t = TREINOS[key];
+  const { semana, fase, serie } = faseDe(currentDay);
+  const reg = registo(currentDay);
+  const body = $("#hojeBody");
+  const antes = currentDay < state.inicio;
+  body.innerHTML = "";
+  body.className = "t-" + t.tipo;
+
+  // Cabeçalho
+  const hero = document.createElement("div");
+  hero.className = "card hero";
+  const total = totalSeries(t, serie), feitas = seriesFeitas(t, serie, reg);
+  hero.innerHTML = `
+    <div class="eyebrow">${esc(fmtDate(currentDay, { weekday: "long", day: "numeric", month: "long" }))}${antes ? "" : ` · Semana ${semana} · ${FASES[fase].nome}`}</div>
+    <div class="big-title">${esc(t.nome)}</div>
+    <div class="muted">${esc(t.sub)}</div>
+    ${t.min ? `<div class="hero-meta"><span class="pill">≈ ${t.min} min</span>${total && t.tipo !== "ativo" ? `<span class="pill">${total} séries</span>` : ""}${antes ? `<span class="pill">O plano começa a ${esc(fmtDate(state.inicio))}</span>` : ""}</div>` : ""}
+    ${total ? `<div class="bar"><i style="width:${(feitas / total) * 100}%"></i></div>
+      <div class="bar-txt"><span>${feitas} de ${total} séries feitas</span><span>${Math.round((feitas / total) * 100)}%</span></div>` : ""}
+    <label class="swap">Trocar treino deste dia
+      <select id="swapSel">${Object.entries(TREINOS).map(([k, v]) => `<option value="${k}" ${k === key ? "selected" : ""}>${esc(v.nome)}</option>`).join("")}</select>
+    </label>`;
+  body.appendChild(hero);
+  hero.querySelector("#swapSel").onchange = (e) => {
+    const r = getRegisto(currentDay);
+    r.tipo = e.target.value === SEMANA[weekday(currentDay)] ? undefined : e.target.value;
+    r.series = {}; r.concluido = false;
+    save(); renderHoje();
+  };
+
+  if (t.tipo === "descanso") {
+    const c = document.createElement("div");
+    c.className = "card text-card";
+    c.innerHTML = `<h2>Dia de recuperação</h2>
+      <p>Os músculos crescem e tonificam enquanto descansas. Hoje não há treino.</p>
+      <ul><li>Tenta chegar aos 8 000 passos com uma caminhada leve.</li>
+      <li>Dorme 7–9 horas.</li><li>Mantém a proteína em todas as refeições (vê a app Dieta).</li></ul>`;
+    body.appendChild(c);
+    return;
+  }
+
+  if (AQUECIMENTO[t.tipo]) {
+    const w = document.createElement("div");
+    w.className = "card text-card";
+    w.innerHTML = `<h2>Aquecimento</h2><p>${esc(AQUECIMENTO[t.tipo])}</p>`;
+    body.appendChild(w);
+  }
+
+  for (const bloco of t.blocos) {
+    const h = document.createElement("div");
+    h.className = "block-title";
+    h.textContent = bloco.titulo;
+    body.appendChild(h);
+    for (const it of bloco.itens) body.appendChild(exCard(it, serie));
+  }
+
+  if (t.tipo !== "ativo") {
+    const c = document.createElement("div");
+    c.className = "card text-card";
+    c.innerHTML = `<h2>Retorno à calma</h2><p>${esc(CALMA)}</p>`;
+    body.appendChild(c);
+  }
+
+  // Concluir
+  const fim = document.createElement("div");
+  fim.className = "card";
+  if (reg?.concluido) {
+    fim.innerHTML = `<div class="done-badge">✓ Treino concluído${reg.esforco ? ` · ${esc(reg.esforco)}` : ""}</div>
+      <button class="block" id="undoDone">Marcar como não concluído</button>`;
+    fim.querySelector("#undoDone").onclick = () => { reg.concluido = false; save(); renderHoje(); };
+  } else {
+    fim.innerHTML = `<h2>Como correu?</h2>
+      <div class="effort">${["Fácil", "Bom", "Difícil"].map((e) => `<button data-e="${e}" class="${reg?.esforco === e ? "on" : ""}">${e}</button>`).join("")}</div>
+      <button class="primary block" id="doneBtn">Concluir treino</button>`;
+    fim.querySelectorAll(".effort button").forEach((b) => b.onclick = () => { getRegisto(currentDay).esforco = b.dataset.e; save(); renderHoje(); });
+    fim.querySelector("#doneBtn").onclick = () => {
+      const r = getRegisto(currentDay);
+      r.concluido = true;
+      if (key !== SEMANA[weekday(currentDay)]) r.tipo = key;
+      stopTimer(); save(); renderHoje();
+      const n = concluidosNaSemana(mondayOf(currentDay));
+      toast(FORCA.includes(key) ? `Treino concluído! ${n} de 5 esta semana 💪` : "Registado. Bom descanso!");
+    };
+  }
+  body.appendChild(fim);
+}
+
+function exCard(it, f) {
+  const e = EX[it.ex];
+  const n = it.s[f];
+  const reg = registo(currentDay);
+  const marks = reg?.series[it.ex] || [];
+  const doneAll = marks.slice(0, n).filter(Boolean).length === n;
+  const card = document.createElement("div");
+  card.className = "card ex" + (doneAll ? " done" : "");
+  const presc = n > 1 ? `${n} × ${pick(it.reps, f)}` : pick(it.reps, f);
+  const ultima = state.cargas[it.ex];
+  card.innerHTML = `
+    <div class="ex-head"><button class="ex-name"></button><span class="ex-presc">${esc(presc)}</span></div>
+    <div class="ex-sub">${esc(pick(it.carga, f))}${it.rest ? ` · descanso ${it.rest} s` : ""}</div>
+    <div class="sets"></div>
+    ${ultima && reg?.cargas?.[it.ex] == null ? `<div class="last">Última vez: ${esc(ultima)}</div>` : ""}`;
+  card.querySelector(".ex-name").textContent = e.nome;
+  card.querySelector(".ex-name").onclick = () => openEx(it.ex);
+  const sets = card.querySelector(".sets");
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement("button");
+    b.className = "set" + (marks[i] ? " on" : "");
+    b.textContent = n > 1 ? i + 1 : "✓";
+    b.setAttribute("aria-label", `Série ${i + 1} de ${e.nome}`);
+    b.setAttribute("aria-pressed", marks[i] ? "true" : "false");
+    b.onclick = () => {
+      const r = getRegisto(currentDay);
+      const arr = (r.series[it.ex] ||= []);
+      arr[i] = !arr[i];
+      save(); keepAwake();
+      if (arr[i]) {
+        const resto = arr.slice(0, n).filter(Boolean).length < n;
+        if (it.rest && resto) startTimer(it.rest);
+      }
+      const y = window.scrollY;
+      renderHoje();
+      window.scrollTo(0, y);
+    };
+    sets.appendChild(b);
+  }
+  if (TREINOS[tipoDe(currentDay)].tipo !== "ativo") {
+    const inp = document.createElement("input");
+    inp.className = "load";
+    inp.id = "carga-" + it.ex;
+    inp.placeholder = "Carga usada (ex.: 16 kg)";
+    inp.value = reg?.cargas?.[it.ex] ?? "";
+    inp.onchange = () => {
+      const r = getRegisto(currentDay);
+      r.cargas[it.ex] = inp.value.trim();
+      if (inp.value.trim()) state.cargas[it.ex] = inp.value.trim();
+      save();
+    };
+    sets.appendChild(inp);
+  }
+  return card;
+}
+
+// ---------- Render: Plano ----------
+function renderPlano() {
+  const hoje = todayISO();
+  const ref = hoje < state.inicio ? state.inicio : hoje;
+  const { semana, fase } = faseDe(ref);
+  const mon = mondayOf(ref);
+  const body = $("#planoBody");
+  body.innerHTML = `
+    <div class="card">
+      <h2>Semana ${semana} · ${esc(FASES[fase].nome)}</h2>
+      <ul class="week" id="weekList"></ul>
+    </div>
+    <div class="card">
+      <h2>Fases do plano</h2>
+      <div class="phases">${FASES.map((p, i) => `<div class="phase ${i === fase ? "cur" : ""}"><b>${p.semanas}</b><div><strong>${p.nome}</strong><p>${esc(p.txt)}</p></div></div>`).join("")}</div>
+    </div>
+    <div class="card text-card">
+      <h2>Como progredir</h2>
+      <p>Quando fizeres todas as séries no máximo de repetições com boa técnica, sobe um degrau na próxima sessão:</p>
+      <ul>
+        <li>Mais repetições (até 15–20)</li>
+        <li>Mais carga: halteres 3 → 5 kg, kettlebell 12 → 16 kg, 1 → 2 discos</li>
+        <li>Mais tempo sob tensão: 3 s a descer e 2 s de pausa em cima</li>
+        <li>Banda mais forte ou banda + peso no mesmo exercício</li>
+      </ul>
+      <p class="small muted">Regista a carga em cada exercício; da próxima vez aparece "Última vez" para te orientar.</p>
+    </div>
+    <div class="card text-card">
+      <h2>Ideias dos treinadores que segues</h2>
+      <ul>
+        <li><strong>Tay Training</strong>: músculo e perda de gordura ao mesmo tempo, com foco em glúteos, pernas, abdómen e braços. Daqui vêm a técnica cuidada no búlgaro e nos afundos e o circuito de corpo todo de sexta.</li>
+        <li><strong>Rauve Haley</strong>: sentir o glúteo antes de pôr carga. Por isso há ativação no início, pausas de 2 s em cima no coice, na ponte unilateral e na abdução, e trabalho de glúteo médio (zona de cima do glúteo).</li>
+        <li><strong>Carol Borba</strong>: treinos curtos e intensos em casa. Daqui vem o Tabata de glúteos com banda (4 min) no fim de Glúteos B.</li>
+        <li><strong>Ariel Yu</strong>: pequenos ajustes para trabalhar mais o glúteo do que a coxa (inclinação do tronco no búlgaro, posição dos pés no hip thrust), abdominais em quatro apoios e saltar à corda no HIIT.</li>
+      </ul>
+      <p class="small muted">Os detalhes de cada exercício estão em "Como fazer", no separador Exercícios.</p>
+    </div>
+    <div class="card text-card">
+      <h2>Para emagrecer e tonificar</h2>
+      <ul>
+        <li><strong>Défice calórico</strong>: segue o plano da app Dieta. O treino tonifica, a alimentação faz baixar a gordura.</li>
+        <li><strong>Proteína</strong> em todas as refeições, para manter e construir músculo.</li>
+        <li><strong>8 000–10 000 passos</strong> por dia, mesmo nos dias de treino.</li>
+        <li><strong>Sono</strong> de 7–9 horas.</li>
+        <li>Se tiveres dor articular (não confundir com cansaço muscular), troca pela versão mais fácil do exercício.</li>
+      </ul>
+    </div>`;
+  const ul = body.querySelector("#weekList");
+  for (let i = 0; i < 7; i++) {
+    const d = shiftDay(mon, i);
+    const k = tipoDe(d), t = TREINOS[k], r = registo(d);
+    const li = document.createElement("li");
+    li.className = "t-" + t.tipo + (d === hoje ? " today" : "");
+    li.innerHTML = `<span class="dot"></span><span class="d">${DIAS[i]}<br><span class="small">${esc(fmtDate(d, { day: "numeric", month: "short" }))}</span></span>
+      <div class="w"><div>${esc(t.nome)}</div><div>${esc(t.sub)}${t.min ? ` · ${t.min} min` : ""}</div></div>
+      ${r?.concluido ? `<span class="ok" aria-label="Concluído">✓</span>` : ""}`;
+    li.onclick = () => { currentDay = d; showTab("hoje"); };
+    ul.appendChild(li);
+  }
+}
+
+// ---------- Render: Exercícios ----------
+let grupoSel = null;
+function renderExercicios() {
+  const chips = $("#grupoChips");
+  chips.innerHTML = "";
+  [null, 0, 1, 2, 3, 4].forEach((g) => {
+    const b = document.createElement("button");
+    b.className = "chip" + (g === grupoSel ? " on" : "");
+    b.textContent = g === null ? "Todos" : GRUPOS[g];
+    b.onclick = () => { grupoSel = g; renderExercicios(); };
+    chips.appendChild(b);
+  });
+  const term = norm($("#q").value.trim());
+  const ul = $("#exList");
+  ul.innerHTML = "";
+  const lista = Object.entries(EX)
+    .filter(([, e]) => (grupoSel === null || e.grupo === grupoSel) && (!term || norm(e.nome + " " + e.musc + " " + e.equip).includes(term)))
+    .sort((a, b) => a[1].grupo - b[1].grupo || a[1].nome.localeCompare(b[1].nome, "pt"));
+  if (!lista.length) { ul.innerHTML = `<li class="empty">Nenhum exercício encontrado.</li>`; return; }
+  for (const [id, e] of lista) {
+    const li = document.createElement("li");
+    li.className = "tap";
+    li.innerHTML = `<div><div class="name"></div><div class="meta"></div></div><span class="muted">›</span>`;
+    li.querySelector(".name").textContent = e.nome;
+    li.querySelector(".meta").textContent = `${e.musc} · ${e.equip}`;
+    li.onclick = () => openEx(id);
+    ul.appendChild(li);
+  }
+}
+$("#q").oninput = renderExercicios;
+
+function openEx(id) {
+  const e = EX[id];
+  const usos = Object.entries(TREINOS).filter(([, t]) => t.blocos.some((b) => b.itens.some((i) => i.ex === id))).map(([, t]) => t.nome);
+  $("#sheetTitle").textContent = e.nome;
+  $("#sheetBody").innerHTML = `
+    <div class="card"><dl class="kv">
+      <dt>Músculos</dt><dd>${esc(e.musc)}</dd>
+      <dt>Material</dt><dd>${esc(e.equip)}</dd>
+      <dt>Nos treinos</dt><dd>${esc(usos.join(", ") || "–")}</dd>
+      ${state.cargas[id] ? `<dt>Última carga</dt><dd>${esc(state.cargas[id])}</dd>` : ""}
+    </dl></div>
+    <div class="card"><h2>Como fazer</h2><ol class="steps">${e.dicas.map((d) => `<li>${esc(d)}</li>`).join("")}</ol></div>
+    <div class="card"><dl class="kv">
+      <dt>Mais fácil</dt><dd>${esc(e.facil)}</dd>
+      <dt>Mais difícil</dt><dd>${esc(e.dificil)}</dd>
+    </dl></div>`;
+  $("#sheet").hidden = false;
+  document.body.classList.add("noscroll");
+}
+function closeSheet() { $("#sheet").hidden = true; document.body.classList.remove("noscroll"); }
+$("#sheetClose").onclick = closeSheet;
+document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+
+// ---------- Render: Progresso ----------
+function renderProgresso() {
+  const hoje = todayISO();
+  const mon = mondayOf(hoje);
+  const feitos = Object.entries(state.treinos).filter(([, r]) => r.concluido);
+  $("#sSemana").textContent = `${concluidosNaSemana(mon)}/5`;
+  $("#sTotal").textContent = feitos.filter(([d, r]) => FORCA.includes(r.tipo || SEMANA[weekday(d)])).length;
+  $("#sProg").textContent = hoje < state.inicio ? "–" : faseDe(hoje).semana;
+
+  // Gráfico: treinos por semana (últimas 8)
+  const W = 320, H = 150, L = 24, R = 8, T = 12, B = 24;
+  const n = 8, max = 6;
+  const bw = (W - L - R) / n;
+  const y = (v) => T + (H - T - B) * (1 - v / max);
+  let svg = "";
+  for (let v = 0; v <= max; v += 2) svg += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 6}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+  for (let i = 0; i < n; i++) {
+    const m = shiftDay(mon, -7 * (n - 1 - i));
+    const c = concluidosNaSemana(m);
+    const x = L + i * bw + bw * 0.2, w = bw * 0.6;
+    svg += `<rect class="b ${i === n - 1 ? "cur" : ""}" x="${x}" y="${y(c)}" width="${w}" height="${Math.max(0, y(0) - y(c))}" rx="3"/>`;
+    svg += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle">${esc(fmtDate(m, { day: "numeric", month: "numeric" }))}</text>`;
+  }
+  svg += `<line class="goal" x1="${L}" x2="${W - R}" y1="${y(5)}" y2="${y(5)}"/><text class="goal-txt" x="${W - R}" y="${y(5) - 4}" text-anchor="end">meta 5</text>`;
+  $("#weekChart").innerHTML = svg;
+
+  // Histórico
+  const hl = $("#histList");
+  hl.innerHTML = "";
+  const hist = feitos.sort((a, b) => b[0].localeCompare(a[0])).slice(0, 30);
+  if (!hist.length) hl.innerHTML = `<li class="empty">Ainda não há treinos concluídos. Marca as séries no separador Treino e carrega em "Concluir treino".</li>`;
+  for (const [d, r] of hist) {
+    const k = r.tipo || SEMANA[weekday(d)], t = TREINOS[k];
+    const f = faseDe(d).serie;
+    const li = document.createElement("li");
+    li.className = "tap t-" + t.tipo;
+    li.innerHTML = `<div><div class="name">${esc(t.nome)}</div><div class="meta">${esc(fmtDate(d))}${r.esforco ? " · " + esc(r.esforco) : ""}</div></div>
+      <span class="num muted">${t.tipo === "ativo" ? "" : `${seriesFeitas(t, f, r)}/${totalSeries(t, f)} séries`}</span>`;
+    li.onclick = () => { currentDay = d; showTab("hoje"); };
+    hl.appendChild(li);
+  }
+
+  // Medidas
+  $("#mData").value ||= hoje;
+  const ml = $("#medList");
+  ml.innerHTML = "";
+  const meds = [...state.medidas].sort((a, b) => b.data.localeCompare(a.data));
+  const first = meds.at(-1);
+  const diff = (k, m, u) => {
+    if (m[k] == null) return "";
+    const d = first && first !== m && first[k] != null ? m[k] - first[k] : null;
+    const ds = d == null || d === 0 ? "" : ` <span class="${d < 0 ? "diff-down" : "diff-up"}">(${d > 0 ? "+" : ""}${d.toLocaleString("pt-PT", { maximumFractionDigits: 1 })})</span>`;
+    return `${k[0].toUpperCase() + k.slice(1)} ${m[k].toLocaleString("pt-PT")} ${u}${ds}`;
+  };
+  for (const m of meds) {
+    const li = document.createElement("li");
+    li.innerHTML = `<div><div class="name">${esc(fmtDate(m.data, { day: "numeric", month: "short", year: "numeric" }))}</div>
+      <div class="meta">${[diff("peso", m, "kg"), diff("cintura", m, "cm"), diff("anca", m, "cm"), diff("coxa", m, "cm")].filter(Boolean).join(" · ")}</div></div>
+      <button class="icon-btn" aria-label="Apagar medida">✕</button>`;
+    li.querySelector("button").onclick = () => { state.medidas = state.medidas.filter((x) => x !== m); save(); renderProgresso(); };
+    ml.appendChild(li);
+  }
+  $("#inicio").value = state.inicio;
+}
+$("#medForm").onsubmit = (e) => {
+  e.preventDefault();
+  const num = (id) => ($(id).value === "" ? null : Number($(id).value));
+  const m = { data: $("#mData").value, peso: num("#mPeso"), cintura: num("#mCintura"), anca: num("#mAnca"), coxa: num("#mCoxa") };
+  if ([m.peso, m.cintura, m.anca, m.coxa].every((v) => v == null)) { toast("Preenche pelo menos uma medida."); return; }
+  state.medidas = state.medidas.filter((x) => x.data !== m.data).concat(m);
+  save();
+  ["#mPeso", "#mCintura", "#mAnca", "#mCoxa"].forEach((id) => ($(id).value = ""));
+  renderProgresso();
+  toast("Medidas guardadas.");
+};
+$("#setForm").onsubmit = (e) => {
+  e.preventDefault();
+  state.inicio = mondayOf($("#inicio").value);
+  save(); renderAll();
+  toast(`O plano começa a ${fmtDate(state.inicio)}.`);
+};
+let resetArmed = false;
+$("#resetBtn").onclick = () => {
+  if (!resetArmed) {
+    resetArmed = true;
+    $("#resetBtn").textContent = "Confirmar: apagar tudo";
+    $("#resetCancel").hidden = false;
+    return;
+  }
+  state = structuredClone(defaultState);
+  save(); disarm(); renderAll();
+  toast("Dados apagados.");
+};
+function disarm() { resetArmed = false; $("#resetBtn").textContent = "Apagar todos os dados"; $("#resetCancel").hidden = true; }
+$("#resetCancel").onclick = disarm;
+
+// ---------- Navegação ----------
+function showTab(name) {
+  document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === name));
+  try { localStorage.setItem(STORE_KEY + ".tab", name); } catch {}
+  renderAll();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll(".tab").forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));
+$("#prevDay").onclick = () => { currentDay = shiftDay(currentDay, -1); renderHoje(); };
+$("#nextDay").onclick = () => { currentDay = shiftDay(currentDay, 1); renderHoje(); };
+$("#dayPicker").onchange = (e) => { if (e.target.value) { currentDay = e.target.value; renderHoje(); } };
+
+function renderAll() { renderHoje(); renderPlano(); renderExercicios(); renderProgresso(); }
+
+(() => {
+  let tab = null;
+  try { tab = localStorage.getItem(STORE_KEY + ".tab"); } catch {}
+  if (tab && document.getElementById(tab)) showTab(tab); else renderAll();
+  initCloud();
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
