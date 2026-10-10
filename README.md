@@ -42,8 +42,3 @@ Sempre que alterares ficheiros, muda a versão de `CACHE` em `sw.js` para os dis
 Cópia da app para outra pessoa, em `helber/` (https://khiasmila-netizen.github.io/Teste/helber/).
 Gera-se com `python3 tools/build_helber.py`: mesmo código e alimentos, outro nome, ícone azul e
 armazenamento separado. O plano alimentar do Helber fica em `helber/plano.js` e não é apagado ao voltar a gerar.
-
-## Plano Treino
-
-App de treino em `treino/` (https://khiasmila-netizen.github.io/Teste/treino/), criada noutra sessão
-(ramo `ccr-e2d6f634-fw1s2j`) e copiada para aqui para ser publicada pelo GitHub Pages.
