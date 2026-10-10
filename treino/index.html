@@ -103,6 +103,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .bar-txt { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
 .swap { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: .85rem; color: var(--muted); }
 .swap select { flex: 1; min-width: 0; }
+.swapped { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--tone-soft); font-size: .88rem; display: flex; flex-direction: column; gap: 8px; }
+.swapped button { align-self: flex-start; }
 
 .block-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 18px 4px 8px; }
 .ex { padding: 14px 16px; }
@@ -731,10 +733,18 @@ function renderHoje() {
     ${t.min ? `<div class="hero-meta"><span class="pill">≈ ${t.min} min</span>${total && t.tipo !== "ativo" ? `<span class="pill">${total} séries</span>` : ""}${antes ? `<span class="pill">O plano começa a ${esc(fmtDate(state.inicio))}</span>` : ""}</div>` : ""}
     ${total ? `<div class="bar"><i style="width:${(feitas / total) * 100}%"></i></div>
       <div class="bar-txt"><span>${feitas} de ${total} séries feitas</span><span>${Math.round((feitas / total) * 100)}%</span></div>` : ""}
+    ${reg?.tipo && reg.tipo !== SEMANA[weekday(currentDay)] ? `<div class="swapped">Treino trocado. No plano, este dia é <strong>${esc(TREINOS[SEMANA[weekday(currentDay)]].nome)}</strong>.
+      <button class="primary" id="resetSwap">Repor ${esc(TREINOS[SEMANA[weekday(currentDay)]].nome)}</button></div>` : ""}
     <label class="swap">Trocar treino deste dia
       <select id="swapSel">${Object.entries(TREINOS).map(([k, v]) => `<option value="${k}" ${k === key ? "selected" : ""}>${esc(v.nome)}</option>`).join("")}</select>
     </label>`;
   body.appendChild(hero);
+  hero.querySelector("#resetSwap")?.addEventListener("click", () => {
+    const r = getRegisto(currentDay);
+    r.tipo = undefined; r.series = {}; r.concluido = false;
+    save(); renderHoje();
+    toast("Treino do plano reposto.");
+  });
   hero.querySelector("#swapSel").onchange = (e) => {
     const r = getRegisto(currentDay);
     r.tipo = e.target.value === SEMANA[weekday(currentDay)] ? undefined : e.target.value;
@@ -909,7 +919,7 @@ function renderPlano() {
     const li = document.createElement("li");
     li.className = "t-" + t.tipo + (d === hoje ? " today" : "");
     li.innerHTML = `<span class="dot"></span><span class="d">${DIAS[i]}<br><span class="small">${esc(fmtDate(d, { day: "numeric", month: "short" }))}</span></span>
-      <div class="w"><div>${esc(t.nome)}</div><div>${esc(t.sub)}${t.min ? ` · ${t.min} min` : ""}</div></div>
+      <div class="w"><div>${esc(t.nome)}${k !== SEMANA[i] ? ` <span class="small muted">(trocado)</span>` : ""}</div><div>${esc(t.sub)}${t.min ? ` · ${t.min} min` : ""}</div></div>
       ${r?.concluido ? `<span class="ok" aria-label="Concluído">✓</span>` : ""}`;
     li.onclick = () => { currentDay = d; showTab("hoje"); };
     ul.appendChild(li);
