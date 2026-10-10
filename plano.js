@@ -46,7 +46,7 @@ const LT_BOLACHA = { nome: "Bolachas de arroz com queijo", itens: [["Bolacha de 
 const ATUM_GRAO = { nome: "Salada de atum com grão-de-bico", itens: [["Atum em lata (água)", 1, "p"], ["Grão-de-bico cozido", 120], ["Tomate", 100], ["Pepino", 100], ["Cebola", 30], ["Azeite", 5]] };
 const FRANGO_ARROZ = { nome: "Frango grelhado com arroz e brócolos", itens: [["Peito de frango grelhado", 120], ["Arroz branco cozido", 80], ["Brócolos cozidos", 150], ["Azeite", 5]] };
 const OMELETE = { nome: "Omelete de espinafres com salada", itens: [["Omelete (2 ovos)", 1, "p"], ["Espinafres cozidos", 100], ["Salada mista", 1, "p"], ["Pão integral", 1, "p"]] };
-const WRAP = { nome: "Wrap de frango com alface e tomate", itens: [["Wrap / tortilha", 1, "p"], ["Peito de frango grelhado", 100], ["Alface", 30], ["Tomate", 50]] };
+const SALADA_QUINOA = { nome: "Salada de frango com quinoa", itens: [["Peito de frango grelhado", 100], ["Quinoa cozida", 100], ["Tomate", 80], ["Pepino", 80], ["Azeite", 5]] };
 const BOLONHESA = { nome: "Esparguete à bolonhesa", itens: [["Carne picada de vaca", 80], ["Esparguete cozido", 100], ["Tomate", 100], ["Cebola", 30]] };
 const PESCADA = { nome: "Pescada cozida com batata e feijão-verde", itens: [["Pescada cozida", 150], ["Batata cozida", 150], ["Feijão-verde cozido", 150], ["Azeite", 5]] };
 const PERU_CUSCUZ = { nome: "Peru salteado com cuscuz e legumes", itens: [["Peito de peru grelhado", 120], ["Cuscuz cozido", 100], ["Courgette", 100], ["Pimento", 80], ["Azeite", 5]] };
@@ -71,7 +71,7 @@ PLANOS.push({
   dias: [
     dia(PA_AVEIA, LM_MACA, ATUM_GRAO, LT_IOGURTE, FRANGO_ARROZ),      // segunda
     dia(PA_TOSTA, LM_KIWI, FRANGO_ARROZ, LT_SKYR, OMELETE),           // terça
-    dia(PA_IOGURTE, LM_PERA, WRAP, LT_BOLACHA, BOLONHESA),            // quarta
+    dia(PA_IOGURTE, LM_PERA, SALADA_QUINOA, LT_BOLACHA, BOLONHESA),            // quarta
     dia(PA_AVEIA, LM_LARANJA, BOLONHESA, LT_IOGURTE, PESCADA),        // quinta
     dia(PA_TOSTA, LM_MACA, PERU_CUSCUZ, LT_SKYR, SALMAO),             // sexta
     dia(PA_IOGURTE, LM_KIWI, DOURADA, LT_BOLACHA, PIZZA),             // sábado

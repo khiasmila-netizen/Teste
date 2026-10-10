@@ -51,7 +51,7 @@ const LT_BATIDO = { nome: "Batido de proteína com banana", itens: [["Whey Prote
 const ATUM_GRAO = { nome: "Salada de atum com grão-de-bico", itens: [["Atum em lata (água)", 2, "p"], ["Grão-de-bico cozido", 120], ["Tomate", 100], ["Pepino", 100], ["Cebola", 30], ["Azeite", 5]] };
 const FRANGO_ARROZ = { nome: "Frango grelhado com arroz e brócolos", itens: [["Peito de frango grelhado", 180], ["Arroz branco cozido", 120], ["Brócolos cozidos", 150], ["Azeite", 5]] };
 const OMELETE = { nome: "Omelete de espinafres com batata e salada", itens: [["Omelete (2 ovos)", 1, "p"], ["Clara de ovo", 3, "p"], ["Espinafres cozidos", 100], ["Batata cozida", 200], ["Salada mista", 1, "p"]] };
-const WRAP = { nome: "Wrap de frango com queijo creme", itens: [["Wrap / tortilha", 1, "p"], ["Peito de frango grelhado", 130], ["Queijo creme light", 1, "p"], ["Alface", 30], ["Tomate", 80]] };
+const SALADA_QUINOA = { nome: "Salada de frango com quinoa", itens: [["Peito de frango grelhado", 130], ["Quinoa cozida", 150], ["Tomate", 80], ["Pepino", 80], ["Azeite", 5]] };
 const BOLONHESA = { nome: "Esparguete à bolonhesa", itens: [["Carne picada de vaca", 120], ["Esparguete cozido", 110], ["Tomate", 150], ["Cebola", 50]] };
 const LOMBO = { nome: "Lombo de porco grelhado com batata e feijão-verde", itens: [["Lombo de porco grelhado", 150], ["Batata cozida", 100], ["Feijão-verde cozido", 150]] };
 const PERU_CUSCUZ = { nome: "Peru salteado com cuscuz e legumes", itens: [["Peito de peru grelhado", 180], ["Cuscuz cozido", 150], ["Courgette", 100], ["Pimento", 80], ["Azeite", 5]] };
@@ -77,7 +77,7 @@ PLANOS.push({
   dias: [
     dia(PA_BATIDO, LM_IOGURTE, ATUM_GRAO, LT_SKYR, FRANGO_ARROZ),         // segunda
     dia(PA_BATIDO, LM_LARANJA, FRANGO_ARROZ, LT_TOSTA_ATUM, OMELETE),     // terça
-    dia(PA_BATIDO, LM_PERA, WRAP, LT_BATIDO, BOLONHESA),                  // quarta
+    dia(PA_BATIDO, LM_PERA, SALADA_QUINOA, LT_BATIDO, BOLONHESA),                  // quarta
     dia(PA_BATIDO, LM_IOGURTE, BOLONHESA, LT_BOLACHAS, LOMBO),          // quinta
     dia(PA_BATIDO, LM_LARANJA, PERU_CUSCUZ, LT_BOLACHAS, HAMBURGUER),         // sexta
     dia(PA_BATIDO, LM_PERA, BIFE, LT_BOLACHAS, PIZZA),                 // sábado
