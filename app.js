@@ -268,3 +268,8 @@ function renderAll() {
   renderPeso();
 }
 renderAll();
+
+// Permite instalar como app (precisa de https, ex.: GitHub Pages)
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js");
+}
