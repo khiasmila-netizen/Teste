@@ -36,3 +36,9 @@ Sempre que alterares ficheiros, muda a versão de `CACHE` em `sw.js` para os dis
 ## Artefacto no claude.ai
 
 `python3 tools/build_artifact.py saida.html` gera a versão de ficheiro único usada no artefacto (dados guardados na conta do Claude, sem código de barras).
+
+## Dieta Helber
+
+Cópia da app para outra pessoa, em `helber/` (https://khiasmila-netizen.github.io/Teste/helber/).
+Gera-se com `python3 tools/build_helber.py`: mesmo código e alimentos, outro nome, ícone azul e
+armazenamento separado. O plano alimentar do Helber fica em `helber/plano.js` e não é apagado ao voltar a gerar.
