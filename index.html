@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dieta Teste</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🥗 Dieta Teste</h1>
+    <nav>
+      <button class="tab active" data-tab="hoje">Hoje</button>
+      <button class="tab" data-tab="perfil">Perfil</button>
+      <button class="tab" data-tab="peso">Peso</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HOJE -->
+    <section id="hoje" class="panel active">
+      <div class="day-nav">
+        <button id="prevDay" aria-label="Dia anterior">‹</button>
+        <input type="date" id="dayPicker">
+        <button id="nextDay" aria-label="Dia seguinte">›</button>
+      </div>
+
+      <div class="card summary">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120" class="ring">
+            <circle cx="60" cy="60" r="52" class="ring-bg"/>
+            <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
+          </svg>
+          <div class="ring-label">
+            <strong id="kcalLeft">0</strong>
+            <span id="kcalLeftLabel">kcal restantes</span>
+          </div>
+        </div>
+        <div class="macros">
+          <div class="macro"><span>Proteína</span><div class="bar"><i id="barP"></i></div><small id="txtP"></small></div>
+          <div class="macro"><span>Hidratos</span><div class="bar"><i id="barC"></i></div><small id="txtC"></small></div>
+          <div class="macro"><span>Gordura</span><div class="bar"><i id="barG"></i></div><small id="txtG"></small></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>💧 Água</h2>
+        <div id="water" class="water"></div>
+        <small id="waterTxt"></small>
+      </div>
+
+      <div class="card">
+        <h2>Adicionar alimento</h2>
+        <form id="addForm" class="add-form">
+          <select id="meal">
+            <option>Pequeno-almoço</option>
+            <option>Almoço</option>
+            <option>Lanche</option>
+            <option>Jantar</option>
+            <option>Ceia</option>
+          </select>
+          <input list="foodList" id="food" placeholder="Alimento" required>
+          <datalist id="foodList"></datalist>
+          <input type="number" id="grams" placeholder="Gramas" min="1" value="100" required>
+          <button type="submit">Adicionar</button>
+        </form>
+        <details class="custom">
+          <summary>Alimento não está na lista? Introduz manualmente</summary>
+          <form id="customForm" class="add-form">
+            <input id="cNome" placeholder="Nome" required>
+            <input type="number" id="cKcal" placeholder="kcal/100g" min="0" step="any" required>
+            <input type="number" id="cP" placeholder="Prot/100g" min="0" step="any" value="0">
+            <input type="number" id="cC" placeholder="Hidr/100g" min="0" step="any" value="0">
+            <input type="number" id="cG" placeholder="Gord/100g" min="0" step="any" value="0">
+            <button type="submit">Guardar alimento</button>
+          </form>
+        </details>
+      </div>
+
+      <div id="meals"></div>
+    </section>
+
+    <!-- PERFIL -->
+    <section id="perfil" class="panel">
+      <div class="card">
+        <h2>O teu perfil</h2>
+        <form id="profileForm" class="grid-form">
+          <label>Sexo
+            <select name="sexo"><option value="f">Feminino</option><option value="m">Masculino</option></select>
+          </label>
+          <label>Idade <input type="number" name="idade" min="10" max="100" required></label>
+          <label>Altura (cm) <input type="number" name="altura" min="100" max="250" required></label>
+          <label>Peso (kg) <input type="number" name="peso" min="30" max="300" step="0.1" required></label>
+          <label>Atividade
+            <select name="atividade">
+              <option value="1.2">Sedentário</option>
+              <option value="1.375">Ligeira (1-3x/semana)</option>
+              <option value="1.55">Moderada (3-5x/semana)</option>
+              <option value="1.725">Intensa (6-7x/semana)</option>
+            </select>
+          </label>
+          <label>Objetivo
+            <select name="objetivo">
+              <option value="-500">Perder peso (-500 kcal)</option>
+              <option value="-250">Perder devagar (-250 kcal)</option>
+              <option value="0">Manter</option>
+              <option value="300">Ganhar massa (+300 kcal)</option>
+            </select>
+          </label>
+          <button type="submit">Guardar</button>
+        </form>
+      </div>
+      <div class="card" id="targets"></div>
+      <div class="card">
+        <h2>Dados</h2>
+        <button id="resetBtn" class="danger">Apagar todos os dados</button>
+      </div>
+    </section>
+
+    <!-- PESO -->
+    <section id="peso" class="panel">
+      <div class="card">
+        <h2>Registar peso</h2>
+        <form id="weightForm" class="add-form">
+          <input type="date" id="wDate" required>
+          <input type="number" id="wVal" placeholder="kg" step="0.1" min="30" max="300" required>
+          <button type="submit">Registar</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Evolução</h2>
+        <svg id="chart" viewBox="0 0 320 160" class="chart"></svg>
+        <ul id="weightList" class="list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="foods.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
