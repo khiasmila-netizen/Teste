@@ -217,6 +217,17 @@ body.noscroll { overflow: hidden; }
   </section>
 
   <section id="progresso" class="panel">
+    <div class="card" id="dietaCard" hidden>
+      <h2>Peso <span class="status">da app Dieta</span></h2>
+      <div class="stats">
+        <div class="stat"><strong id="dInicial">–</strong><span>Inicial</span></div>
+        <div class="stat"><strong id="dAtual">–</strong><span>Atual</span></div>
+        <div class="stat"><strong id="dMeta">–</strong><span>Meta</span></div>
+      </div>
+      <div class="bar" style="margin-top:12px"><i id="dBar"></i></div>
+      <div class="bar-txt"><span id="dTxt"></span><span id="dData"></span></div>
+      <p class="small muted">Só leitura: para mudar o peso ou a meta, usa a app Dieta.</p>
+    </div>
     <div class="card">
       <h2>Resumo</h2>
       <div class="stats">
@@ -628,6 +639,21 @@ function toast(msg) {
   toast.h = setTimeout(() => t.classList.remove("show"), 2200);
 }
 
+// Lê o peso da app Dieta, que está no mesmo site. Só lê: nunca escreve nos dados da Dieta.
+function lerDieta() {
+  try {
+    const d = JSON.parse(localStorage.getItem("dietaTeste.v1"));
+    if (!d) return null;
+    const pesos = (d.pesos || []).filter((p) => p && p.kg).sort((a, b) => a.data.localeCompare(b.data));
+    const ult = pesos.at(-1);
+    const atual = ult ? ult.kg : d.perfil?.peso ?? null;
+    const inicial = d.meta?.pesoInicial || pesos[0]?.kg || d.perfil?.peso || null;
+    const meta = d.meta?.pesoMeta || null;
+    if (atual == null && meta == null) return null;
+    return { atual, inicial, meta, data: ult?.data || null };
+  } catch { return null; }
+}
+
 let state = load();
 let currentDay = todayISO();
 
@@ -972,6 +998,24 @@ function renderProgresso() {
     li.onclick = () => { currentDay = d; showTab("hoje"); };
     hl.appendChild(li);
   }
+
+  // Peso da app Dieta (só leitura)
+  const dieta = lerDieta();
+  $("#dietaCard").hidden = !dieta;
+  if (dieta) {
+    const kg = (v) => (v == null ? "–" : v.toLocaleString("pt-PT", { maximumFractionDigits: 1 }));
+    $("#dInicial").textContent = kg(dieta.inicial);
+    $("#dAtual").textContent = kg(dieta.atual);
+    $("#dMeta").textContent = kg(dieta.meta);
+    const total = dieta.inicial != null && dieta.meta != null ? dieta.inicial - dieta.meta : 0;
+    const feito = dieta.inicial != null && dieta.atual != null ? dieta.inicial - dieta.atual : 0;
+    const pct = total > 0 ? Math.max(0, Math.min(100, (feito / total) * 100)) : 0;
+    $("#dBar").style.width = pct + "%";
+    const falta = dieta.atual != null && dieta.meta != null ? dieta.atual - dieta.meta : null;
+    $("#dTxt").textContent = falta == null ? "Define a meta na app Dieta" : falta > 0 ? `Faltam ${kg(falta)} kg` : "Meta atingida!";
+    $("#dData").textContent = dieta.data ? "pesado a " + fmtDate(dieta.data, { day: "numeric", month: "short" }) : "";
+  }
+  $("#mPeso").placeholder = dieta?.atual != null ? `${dieta.atual.toLocaleString("pt-PT")} (Dieta)` : "";
 
   // Medidas
   $("#mData").value ||= hoje;
