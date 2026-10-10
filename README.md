@@ -1,4 +1,4 @@
-# Dieta Teste 🥗
+# Dieta Katia 🥗
 
 Aplicação web simples (HTML + CSS + JavaScript, sem dependências) para acompanhar a dieta.
 
