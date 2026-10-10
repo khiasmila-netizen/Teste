@@ -413,67 +413,67 @@ const EX = {
 };
 
 // ---------- Treinos ----------
-// s = séries por fase [readaptação, construção, intensificação]; reps e carga podem variar por fase.
+// s = séries por fase (3 em todos os exercícios exceto ativação) [readaptação, construção, intensificação]; reps e carga podem variar por fase.
 const TREINOS = {
   GA: { nome: "Glúteos A", sub: "Força: hip thrust e dobradiça da anca", tipo: "gluteo", min: 45, blocos: [
     { titulo: "Ativação", itens: [
       { ex: "monster", s: [2, 2, 2], reps: "12 passos/lado", rest: 30, carga: "Banda média" },
       { ex: "clam", s: [2, 2, 2], reps: "15/lado", rest: 30, carga: "Banda média" } ] },
     { titulo: "Principal", itens: [
-      { ex: "hipThrust", s: [3, 3, 4], reps: ["12", "10–12", "8–10"], rest: 90, carga: ["1 disco 10 kg", "2 discos (20 kg)", "2 discos + banda nos joelhos"] },
-      { ex: "rdlKb", s: [3, 3, 4], reps: "12", rest: 90, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg, 3 s a descer"] },
-      { ex: "sumoKb", s: [2, 3, 3], reps: "12–15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg + pausa em baixo"] },
-      { ex: "ponteUni", s: [2, 3, 3], reps: "12/perna", rest: 45, carga: ["Peso corporal", "Peso corporal", "Halter 5 kg na anca"] } ] },
+      { ex: "hipThrust", s: [3, 3, 3], reps: ["12", "10–12", "8–10"], rest: 90, carga: ["1 disco 10 kg", "2 discos (20 kg)", "2 discos + banda nos joelhos"] },
+      { ex: "rdlKb", s: [3, 3, 3], reps: "12", rest: 90, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg, 3 s a descer"] },
+      { ex: "sumoKb", s: [3, 3, 3], reps: "12–15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg + pausa em baixo"] },
+      { ex: "ponteUni", s: [3, 3, 3], reps: "12/perna", rest: 45, carga: ["Peso corporal", "Peso corporal", "Halter 5 kg na anca"] } ] },
     { titulo: "Finalizador", itens: [
-      { ex: "abdLado", s: [2, 2, 3], reps: "20/lado", rest: 30, carga: "Banda média" },
-      { ex: "pulseHT", s: [1, 2, 2], reps: "30–40 s", rest: 30, carga: "Banda + 1 disco 10 kg" } ] } ] },
+      { ex: "abdLado", s: [3, 3, 3], reps: "20/lado", rest: 30, carga: "Banda média" },
+      { ex: "pulseHT", s: [3, 3, 3], reps: "30–40 s", rest: 30, carga: "Banda + 1 disco 10 kg" } ] } ] },
   TA: { nome: "Tronco A", sub: "Costas, bíceps e abdominais", tipo: "tronco", min: 40, blocos: [
     { titulo: "Ativação", itens: [
       { ex: "pullApart", s: [2, 2, 2], reps: "15", rest: 30, carga: "Banda leve" } ] },
     { titulo: "Principal", itens: [
-      { ex: "remadaCurv", s: [3, 3, 4], reps: "12", rest: 75, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg, pausa em cima"] },
+      { ex: "remadaCurv", s: [3, 3, 3], reps: "12", rest: 75, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg, pausa em cima"] },
       { ex: "remadaUni", s: [3, 3, 3], reps: "10/braço", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg, 3 s a descer"] },
-      { ex: "pullover", s: [2, 3, 3], reps: "12", rest: 60, carga: ["Halter 5 kg", "Halter 5 kg", "KB 12 kg"] },
-      { ex: "curl", s: [2, 3, 3], reps: "12/braço", rest: 60, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg"] },
-      { ex: "martelo", s: [2, 2, 3], reps: "12–15", rest: 45, carga: ["Halteres 3 kg", "Halteres 3–5 kg", "Halteres 5 kg"] },
-      { ex: "superman", s: [2, 3, 3], reps: "10", rest: 45, carga: "Peso corporal" } ] },
+      { ex: "pullover", s: [3, 3, 3], reps: "12", rest: 60, carga: ["Halter 5 kg", "Halter 5 kg", "KB 12 kg"] },
+      { ex: "curl", s: [3, 3, 3], reps: "12/braço", rest: 60, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg"] },
+      { ex: "martelo", s: [3, 3, 3], reps: "12–15", rest: 45, carga: ["Halteres 3 kg", "Halteres 3–5 kg", "Halteres 5 kg"] },
+      { ex: "superman", s: [3, 3, 3], reps: "10", rest: 45, carga: "Peso corporal" } ] },
     { titulo: "Abdominais", itens: [
       { ex: "prancha", s: [3, 3, 3], reps: ["20–30 s", "30–40 s", "45 s"], rest: 30, carga: "Peso corporal" },
-      { ex: "deadBug", s: [2, 3, 3], reps: "8/lado", rest: 30, carga: ["Peso corporal", "Peso corporal", "Halter 3 kg"] },
-      { ex: "bicicleta", s: [2, 3, 3], reps: "20", rest: 30, carga: "Peso corporal" } ] } ] },
+      { ex: "deadBug", s: [3, 3, 3], reps: "8/lado", rest: 30, carga: ["Peso corporal", "Peso corporal", "Halter 3 kg"] },
+      { ex: "bicicleta", s: [3, 3, 3], reps: "20", rest: 30, carga: "Peso corporal" } ] } ] },
   GB: { nome: "Glúteos B", sub: "Unilateral: búlgaro, afundos e step-up", tipo: "gluteo", min: 45, blocos: [
     { titulo: "Ativação", itens: [
       { ex: "ponteBanda", s: [2, 2, 2], reps: "15", rest: 30, carga: "Banda média" },
       { ex: "fireHyd", s: [2, 2, 2], reps: "12/lado", rest: 30, carga: "Banda média" } ] },
     { titulo: "Principal", itens: [
-      { ex: "bulgaro", s: [3, 3, 4], reps: "10/perna", rest: 75, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
+      { ex: "bulgaro", s: [3, 3, 3], reps: "10/perna", rest: 75, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
       { ex: "rdlUni", s: [3, 3, 3], reps: "10/perna", rest: 60, carga: ["Halter 5 kg", "KB 12 kg", "KB 16 kg"] },
-      { ex: "afundoTras", s: [2, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
-      { ex: "stepUp", s: [2, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] } ] },
+      { ex: "afundoTras", s: [3, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
+      { ex: "stepUp", s: [3, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] } ] },
     { titulo: "Finalizador", itens: [
-      { ex: "coice", s: [2, 3, 3], reps: "15/perna", rest: 30, carga: "Banda média" },
-      { ex: "abdSent", s: [2, 2, 3], reps: "20", rest: 30, carga: "Banda forte" } ] } ] },
+      { ex: "coice", s: [3, 3, 3], reps: "15/perna", rest: 30, carga: "Banda média" },
+      { ex: "abdSent", s: [3, 3, 3], reps: "20", rest: 30, carga: "Banda forte" } ] } ] },
   TB: { nome: "Tronco B", sub: "Ombros, peito, tríceps e abdominais", tipo: "tronco", min: 40, blocos: [
     { titulo: "Principal", itens: [
-      { ex: "flexoes", s: [3, 3, 4], reps: ["6–8", "8–10", "10–12"], rest: 60, carga: ["Joelhos no chão", "Joelhos ou completas", "Completas"] },
+      { ex: "flexoes", s: [3, 3, 3], reps: ["6–8", "8–10", "10–12"], rest: 60, carga: ["Joelhos no chão", "Joelhos ou completas", "Completas"] },
       { ex: "floorPress", s: [3, 3, 3], reps: "12", rest: 60, carga: ["Halteres 5 kg", "Halteres 5 kg", "Halteres 5 kg, 3 s a descer"] },
       { ex: "press", s: [3, 3, 3], reps: "10–12", rest: 60, carga: ["Halteres 3 kg", "Halteres 5 kg", "Halteres 5 kg"] },
-      { ex: "elevLat", s: [2, 3, 3], reps: "12–15", rest: 45, carga: "Halteres 3 kg" },
-      { ex: "tricepsKb", s: [2, 3, 3], reps: "12", rest: 45, carga: ["Halter 5 kg", "KB 12 kg", "KB 12 kg"] },
-      { ex: "fundos", s: [2, 3, 3], reps: ["8", "10", "12"], rest: 45, carga: "Peso corporal" } ] },
+      { ex: "elevLat", s: [3, 3, 3], reps: "12–15", rest: 45, carga: "Halteres 3 kg" },
+      { ex: "tricepsKb", s: [3, 3, 3], reps: "12", rest: 45, carga: ["Halter 5 kg", "KB 12 kg", "KB 12 kg"] },
+      { ex: "fundos", s: [3, 3, 3], reps: ["8", "10", "12"], rest: 45, carga: "Peso corporal" } ] },
     { titulo: "Abdominais", itens: [
-      { ex: "russian", s: [2, 3, 3], reps: "20", rest: 30, carga: ["Sem peso", "Halter 3 kg", "Halter 5 kg"] },
-      { ex: "pranchaLat", s: [2, 3, 3], reps: ["15–20 s/lado", "25 s/lado", "30–40 s/lado"], rest: 30, carga: "Peso corporal" },
-      { ex: "elevPernas", s: [2, 3, 3], reps: "10–12", rest: 30, carga: "Peso corporal" } ] } ] },
+      { ex: "russian", s: [3, 3, 3], reps: "20", rest: 30, carga: ["Sem peso", "Halter 3 kg", "Halter 5 kg"] },
+      { ex: "pranchaLat", s: [3, 3, 3], reps: ["15–20 s/lado", "25 s/lado", "30–40 s/lado"], rest: 30, carga: "Peso corporal" },
+      { ex: "elevPernas", s: [3, 3, 3], reps: "10–12", rest: 30, carga: "Peso corporal" } ] } ] },
   GC: { nome: "Glúteos C", sub: "Kettlebell e cardio para queimar", tipo: "gluteo", min: 40, blocos: [
     { titulo: "Ativação", itens: [
       { ex: "monster", s: [2, 2, 2], reps: "12 passos/lado", rest: 30, carga: "Banda média" } ] },
     { titulo: "Principal", itens: [
-      { ex: "swing", s: [4, 5, 6], reps: "15", rest: 45, carga: ["KB 12 kg", "KB 12 → 16 kg", "KB 16 kg"] },
-      { ex: "goblet", s: [3, 3, 4], reps: "15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg"] },
+      { ex: "swing", s: [3, 3, 3], reps: "15", rest: 45, carga: ["KB 12 kg", "KB 12 → 16 kg", "KB 16 kg"] },
+      { ex: "goblet", s: [3, 3, 3], reps: "15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg"] },
       { ex: "ponteElev", s: [3, 3, 3], reps: "15", rest: 45, carga: ["1 disco 10 kg", "2 discos (20 kg)", "2 discos + banda"] },
-      { ex: "afundoLat", s: [2, 3, 3], reps: "10/lado", rest: 45, carga: ["Peso corporal", "KB 12 kg", "KB 12 kg"] },
-      { ex: "frog", s: [2, 2, 3], reps: "20–25", rest: 30, carga: "Banda média" } ] },
+      { ex: "afundoLat", s: [3, 3, 3], reps: "10/lado", rest: 45, carga: ["Peso corporal", "KB 12 kg", "KB 12 kg"] },
+      { ex: "frog", s: [3, 3, 3], reps: "20–25", rest: 30, carga: "Banda média" } ] },
     { titulo: "Finalizador", itens: [
       { ex: "hiit", s: [1, 1, 1], reps: ["6 min", "8 min", "10 min"], rest: 0, carga: "30 s ativo / 30 s pausa" } ] } ] },
   ATIVO: { nome: "Descanso ativo", sub: "Caminhada e mobilidade", tipo: "ativo", min: 45, blocos: [
@@ -493,10 +493,10 @@ const AQUECIMENTO = {
 const CALMA = "5 min de alongamentos: pombo, flexores da anca, isquiotibiais e peito na parede (40 s cada). Bebe água.";
 
 const FASES = [
-  { nome: "Readaptação", semanas: "Sem. 1–2", txt: "Menos séries e cargas leves. Foca-te na técnica e acaba cada exercício com 3–4 repetições ainda em reserva." },
-  { nome: "Construção", semanas: "Sem. 3–6", txt: "Mais séries e cargas maiores (KB 16 kg, 2 discos). As últimas 2 repetições devem custar." },
-  { nome: "Intensificação", semanas: "Sem. 7–10", txt: "Mais volume, descidas lentas (3 s) e pausas no topo. Termina cada série a 1–2 repetições da falha." },
-  { nome: "Descarga", semanas: "Sem. 11", txt: "Semana leve para recuperar, com as séries da readaptação. Depois o ciclo recomeça na Construção com as cargas novas." },
+  { nome: "Readaptação", semanas: "Sem. 1–2", txt: "Cargas leves. Foca-te na técnica e acaba cada exercício com 3–4 repetições ainda em reserva." },
+  { nome: "Construção", semanas: "Sem. 3–6", txt: "Cargas maiores (KB 16 kg, 2 discos). As últimas 2 repetições devem custar." },
+  { nome: "Intensificação", semanas: "Sem. 7–10", txt: "Descidas lentas (3 s) e pausas no topo. Termina cada série a 1–2 repetições da falha." },
+  { nome: "Descarga", semanas: "Sem. 11", txt: "Semana leve para recuperar, com as cargas da readaptação. Depois o ciclo recomeça na Construção com as cargas novas." },
 ];
 
 // ---------- Estado / armazenamento ----------
