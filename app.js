@@ -524,6 +524,17 @@ const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"
 const DIAS_CURTOS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 let planoSemana = mondayOf(todayISO());
 let planoDia = (new Date().getDay() + 6) % 7; // 0 = segunda
+// Sem plano para esta semana? Abre o próximo plano disponível (ex.: a semana seguinte)
+if (!PLANOS.some((p) => p.semana === planoSemana)) {
+  const prox = PLANOS.map((p) => p.semana).filter((w) => w > planoSemana).sort()[0];
+  if (prox) { planoSemana = prox; planoDia = 0; }
+}
+function setPlanoSemana(w) {
+  planoSemana = w;
+  const hoje = todayISO();
+  planoDia = hoje >= w && hoje <= shiftDay(w, 6) ? (new Date().getDay() + 6) % 7 : 0;
+  renderPlano();
+}
 
 function mondayOf(iso) {
   const d = new Date(iso + "T12:00:00");
@@ -583,7 +594,7 @@ function renderPlano() {
       <p>Pede ao Claude um plano novo e ele aparece aqui. Depois escolhes o que queres passar para o Diário.</p>
       ${outras.length ? `<button class="link" id="lastPlan">Ver o plano mais recente</button>` : ""}
     </div>`;
-    if (outras.length) $("#lastPlan").onclick = () => { planoSemana = outras.at(-1); renderPlano(); };
+    if (outras.length) $("#lastPlan").onclick = () => setPlanoSemana(outras.at(-1));
     return;
   }
 
@@ -664,8 +675,8 @@ function renderPlano() {
   }
 }
 
-$("#prevWeek").onclick = () => { planoSemana = shiftDay(planoSemana, -7); renderPlano(); };
-$("#nextWeek").onclick = () => { planoSemana = shiftDay(planoSemana, 7); renderPlano(); };
+$("#prevWeek").onclick = () => setPlanoSemana(shiftDay(planoSemana, -7));
+$("#nextWeek").onclick = () => setPlanoSemana(shiftDay(planoSemana, 7));
 
 // ---------- Aviso rápido ----------
 let toastTimer;
