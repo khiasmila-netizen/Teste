@@ -31,3 +31,7 @@ A app pode ser instalada a partir do GitHub Pages (`manifest.webmanifest` + `sw.
 3. Abre o endereço `https://<utilizador>.github.io/Teste/` no Chrome → menu ⋮ → **Instalar app** / **Adicionar ao ecrã principal**.
 
 Sempre que alterares ficheiros, muda a versão de `CACHE` em `sw.js` para os dispositivos irem buscar a versão nova.
+
+## Artefacto no claude.ai
+
+`python3 tools/build_artifact.py saida.html` gera a versão de ficheiro único usada no artefacto (dados guardados na conta do Claude, sem código de barras).
