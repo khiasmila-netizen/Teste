@@ -105,20 +105,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .load { flex: 1 1 140px; min-width: 0; font-size: .88rem; }
 .last { font-size: .75rem; color: var(--muted); margin-top: 6px; }
 
-/* Demonstração: alterna posição inicial e final */
-.ex-top { display: flex; gap: 12px; align-items: flex-start; }
-.ex-top > div { flex: 1; min-width: 0; }
-.demo { position: relative; display: block; aspect-ratio: 3 / 2; max-width: 100%; border-radius: 10px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); padding: 0; }
-.demo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.demo img + img { animation: flip 2.4s steps(1) infinite; }
-@keyframes flip { 0% { opacity: 0; } 50% { opacity: 1; } }
-.demo.thumb { width: 96px; flex: none; }
-.demo.none { display: flex; align-items: center; justify-content: center; text-align: center; color: var(--tone, var(--accent)); font-size: .78rem; font-weight: 600; text-decoration: none; line-height: 1.3; }
-.demo.big { width: 100%; margin-bottom: 14px; }
-.video { display: inline-flex; align-items: center; gap: 6px; color: var(--tone, var(--accent)); font-weight: 600; font-size: .85rem; text-decoration: none; }
-.video.btn { display: flex; justify-content: center; padding: 12px; border-radius: 10px; border: 1px solid var(--accent); color: var(--accent); margin-bottom: 14px; font-size: 1rem; }
-.credit { font-size: .72rem; color: var(--muted); }
-@media (prefers-reduced-motion: reduce) { .demo img + img { animation: none; opacity: 0; } }
 
 .text-card p { margin: 0 0 6px; line-height: 1.5; }
 .text-card ul { margin: 0; padding-left: 18px; line-height: 1.6; }
@@ -308,10 +294,10 @@ const EX = {
     dicas: ["Em quatro apoios, banda acima dos joelhos.", "Abre a perna para o lado com o joelho fletido, sem inclinar o tronco.", "Desce devagar."],
     facil: "Sem banda", dificil: "Estica a perna no topo (fire hydrant com extensão)" },
   hipThrust: { nome: "Hip thrust com discos", grupo: 0, musc: "Glúteo máximo, isquiotibiais", equip: "Discos 10 kg, sofá ou cama",
-    dicas: ["Parte superior das costas apoiada na beira do sofá, discos sobre a anca (usa uma toalha dobrada por baixo).", "Pés à largura da anca; em cima, as canelas ficam na vertical.", "Queixo ao peito e costelas para baixo; sobe empurrando pelos calcanhares.", "Aperta os glúteos 1–2 s em cima, sem arquear a lombar."],
+    dicas: ["Parte superior das costas apoiada na beira do sofá, discos sobre a anca (usa uma toalha dobrada por baixo).", "Pés à largura da anca; em cima, as canelas ficam na vertical.", "Queixo ao peito e costelas para baixo; sobe empurrando pelos calcanhares.", "Aperta os glúteos 1–2 s em cima, sem arquear a lombar.", "Sentes nos quadríceps? Afasta os pés. Sentes nos isquiotibiais? Aproxima-os."],
     facil: "Ponte de glúteos no chão com 1 disco", dificil: "2 discos + banda nos joelhos, pausa de 3 s" },
   rdlKb: { nome: "Peso morto romeno com kettlebell", grupo: 0, musc: "Glúteos, isquiotibiais", equip: "Kettlebell 12/16 kg",
-    dicas: ["Pés à largura da anca, kettlebell junto às coxas.", "Joelhos ligeiramente fletidos; leva a anca para trás como para fechar uma porta com o rabo.", "Costas direitas; desce até sentires os isquiotibiais a esticar (meio da canela).", "Sobe a apertar os glúteos, sem inclinar o tronco para trás."],
+    dicas: ["Pés à largura da anca, kettlebell junto às coxas.", "Joelhos ligeiramente fletidos; leva a anca para trás como para fechar uma porta com o rabo.", "Costas direitas; desce até sentires os isquiotibiais a esticar (meio da canela).", "Sobe a empurrar a anca para a frente e a apertar os glúteos, sem inclinar o tronco para trás.", "Se só sentes os isquiotibiais, flete um pouco mais os joelhos e pensa em levar a anca para trás, não o tronco para baixo."],
     facil: "KB 12 kg ou halteres 5 kg", dificil: "KB 16 kg com 3 s a descer" },
   sumoKb: { nome: "Agachamento sumo com kettlebell", grupo: 0, musc: "Glúteos, adutores, quadríceps", equip: "Kettlebell 12/16 kg",
     dicas: ["Pés mais afastados que os ombros, pontas viradas para fora.", "Segura a kettlebell pela pega com os braços esticados.", "Desce com os joelhos na direção dos pés e o peito alto.", "Sobe a empurrar o chão e aperta os glúteos."],
@@ -323,7 +309,7 @@ const EX = {
     dicas: ["Posição de hip thrust, banda acima dos joelhos.", "Fica em cima e faz pequenos movimentos de 5–10 cm sem descer.", "Joelhos sempre a empurrar a banda para fora."],
     facil: "Sem disco", dificil: "2 discos" },
   bulgaro: { nome: "Agachamento búlgaro", grupo: 0, musc: "Glúteos, quadríceps", equip: "Halteres 3/5 kg, cadeira",
-    dicas: ["Pé de trás apoiado numa cadeira, pé da frente um passo largo à frente.", "Inclina ligeiramente o tronco à frente para trabalhar mais o glúteo.", "Desce a direito até a coxa da frente ficar quase paralela ao chão.", "Sobe a empurrar pelo calcanhar da frente."],
+    dicas: ["Pé de trás apoiado numa cadeira, pé da frente um passo largo à frente.", "Mais glúteo: pé da frente mais longe da cadeira e tronco inclinado à frente (30–45°). Passo curto e tronco direito puxam mais pelo quadríceps.", "Desce a direito até a coxa da frente ficar quase paralela ao chão.", "Sobe a empurrar pelo calcanhar da frente."],
     facil: "Sem peso e com apoio numa parede", dificil: "Halteres 5 kg e 3 s a descer" },
   rdlUni: { nome: "Peso morto romeno unilateral", grupo: 0, musc: "Glúteos, isquiotibiais, equilíbrio", equip: "Kettlebell 12/16 kg",
     dicas: ["Kettlebell na mão do lado oposto à perna de apoio.", "Leva a perna livre para trás enquanto o tronco desce, como uma balança.", "Anca nivelada, virada para o chão.", "Sobe a apertar o glúteo da perna de apoio."],
@@ -332,10 +318,10 @@ const EX = {
     dicas: ["Em pé, dá um passo largo para trás.", "Desce até o joelho de trás quase tocar no chão.", "Tronco ligeiramente inclinado à frente; volta empurrando pelo calcanhar da frente."],
     facil: "Sem peso", dificil: "Halteres 5 kg ou pé da frente sobre 1 disco" },
   stepUp: { nome: "Step-up", grupo: 0, musc: "Glúteos, quadríceps", equip: "Halteres, cadeira ou degrau firme",
-    dicas: ["Pé inteiro em cima de uma cadeira estável ou degrau.", "Sobe usando só a perna de cima, sem dar impulso com a de baixo.", "Desce devagar, controlando."],
+    dicas: ["Pé inteiro em cima de uma cadeira estável ou degrau.", "Sobe usando só a perna de cima, sem dar impulso com a de baixo.", "Inclina o tronco à frente sobre a perna de cima para trabalhar mais o glúteo.", "Desce devagar, controlando."],
     facil: "Degrau mais baixo, sem peso", dificil: "Halteres 5 kg e descida em 3 s" },
   coice: { nome: "Coice de glúteo com banda", grupo: 0, musc: "Glúteo máximo", equip: "Banda, tapete",
-    dicas: ["Em quatro apoios, banda à volta dos pés ou acima dos joelhos.", "Empurra um calcanhar em direção ao teto, joelho fletido a 90°.", "Não arqueies a lombar; o movimento é na anca."],
+    dicas: ["Em quatro apoios, banda à volta dos pés ou acima dos joelhos.", "Empurra um calcanhar em direção ao teto, joelho fletido a 90°.", "Não arqueies a lombar; o movimento é na anca.", "Segura 2 s em cima com o glúteo bem contraído. Movimento lento, sem balanço."],
     facil: "Sem banda", dificil: "Banda forte + pausa de 2 s em cima" },
   abdSent: { nome: "Abdução sentada com banda", grupo: 0, musc: "Glúteo médio", equip: "Banda forte",
     dicas: ["Sentada na beira de uma cadeira, banda acima dos joelhos.", "Abre os joelhos o máximo possível e volta devagar.", "Faz metade das repetições inclinada à frente e metade direita."],
@@ -356,8 +342,12 @@ const EX = {
     dicas: ["Deitada de costas, plantas dos pés juntas e joelhos abertos.", "Sobe a anca rapidamente, aperta os glúteos 1 s e desce.", "Repetições rápidas e controladas."],
     facil: "Sem banda", dificil: "Disco 10 kg na anca" },
   hiit: { nome: "Circuito HIIT final", grupo: 4, musc: "Corpo inteiro, cardio", equip: "Kettlebell 12 kg, tapete",
-    dicas: ["30 s a trabalhar, 30 s de pausa; repete a sequência até acabar o tempo:", "1) Agachamento com salto (ou agachamento rápido sem salto)", "2) Mountain climbers", "3) Kettlebell swing 12 kg", "4) Jumping jacks (ou passos laterais rápidos)", "Mantém um ritmo em que consegues falar com dificuldade."],
+    dicas: ["30 s a trabalhar, 30 s de pausa; repete a sequência até acabar o tempo:", "1) Agachamento com salto (ou agachamento rápido sem salto)", "2) Mountain climbers", "3) Kettlebell swing 12 kg", "4) Saltar à corda (sem corda: simula o movimento com saltos baixos)", "Mantém um ritmo em que consegues falar com dificuldade."],
     facil: "Sem saltos, 20 s ativo / 40 s pausa", dificil: "40 s ativo / 20 s pausa" },
+
+  tabata: { nome: "Tabata de glúteos com banda", grupo: 0, musc: "Glúteos, cardio", equip: "Banda, tapete",
+    dicas: ["8 rondas de 20 s no máximo com 10 s de pausa (4 min no total).", "Rondas ímpares: agachamento com a banda acima dos joelhos.", "Rondas pares: ponte de glúteos com banda, rápida e com aperto em cima.", "Joelhos sempre a empurrar a banda para fora. Tenta manter na 8.ª ronda as repetições da 1.ª."],
+    facil: "Sem banda, ou 20 s de trabalho com 20 s de pausa", dificil: "Agachamento com salto nas rondas ímpares" },
 
   pullApart: { nome: "Pull-apart com banda", grupo: 1, musc: "Deltoide posterior, romboides", equip: "Banda leve",
     dicas: ["Banda à volta dos pulsos, braços esticados à frente à altura dos ombros.", "Afasta as mãos, juntando as omoplatas.", "Controla o regresso."],
@@ -400,6 +390,9 @@ const EX = {
     dicas: ["Mãos na beira da cadeira, dedos para a frente, rabo junto à cadeira.", "Dobra os cotovelos para trás (não para os lados) até 90°.", "Empurra para subir."],
     facil: "Joelhos fletidos e pés perto", dificil: "Pernas esticadas" },
 
+  urso: { nome: "Prancha de urso com toques no ombro", grupo: 3, musc: "Abdominais profundos, ombros", equip: "Tapete",
+    dicas: ["Em quatro apoios, mãos debaixo dos ombros e joelhos debaixo da anca.", "Levanta os joelhos 2–3 cm do chão; costas planas como uma mesa.", "Toca no ombro oposto alternando as mãos, sem balançar a anca.", "Respira devagar e mantém os abdominais apertados."],
+    facil: "Só manter a posição, sem toques", dificil: "Andar 2 passos à frente e 2 atrás em posição de urso" },
   prancha: { nome: "Prancha", grupo: 3, musc: "Abdominais, core", equip: "Tapete",
     dicas: ["Antebraços no chão, cotovelos debaixo dos ombros.", "Corpo em linha reta, glúteos e abdominais contraídos.", "Respira normalmente; não deixes a anca descer."],
     facil: "Prancha com joelhos no chão", dificil: "Toques alternados no ombro" },
@@ -427,17 +420,6 @@ const EX = {
     facil: "5 min", dificil: "15 min" },
 };
 
-// Fotografias de demonstração (posição inicial _0 e final _1), da Free Exercise DB, domínio público.
-// Algumas mostram a versão de ginásio (barra ou banco) do mesmo movimento.
-const IMG = { monster: "Monster_Walk", ponteBanda: "Butt_Lift_Bridge", hipThrust: "Barbell_Hip_Thrust", pulseHT: "Barbell_Hip_Thrust", rdlKb: "Stiff-Legged_Dumbbell_Deadlift", sumoKb: "Plie_Dumbbell_Squat", ponteUni: "Single_Leg_Glute_Bridge", bulgaro: "Split_Squat_with_Dumbbells", rdlUni: "Kettlebell_One-Legged_Deadlift", afundoTras: "Dumbbell_Rear_Lunge", stepUp: "Dumbbell_Step_Ups", coice: "Glute_Kickback", swing: "One-Arm_Kettlebell_Swings", goblet: "Goblet_Squat", afundoLat: "Barbell_Side_Split_Squat", hiit: "Mountain_Climbers", pullApart: "Band_Pull_Apart", remadaCurv: "Bent_Over_Two-Dumbbell_Row", remadaUni: "One-Arm_Kettlebell_Row", pullover: "Straight-Arm_Dumbbell_Pullover", superman: "Superman", curl: "Dumbbell_Alternate_Bicep_Curl", martelo: "Hammer_Curls", flexoes: "Pushups", floorPress: "Dumbbell_Floor_Press", press: "Dumbbell_Shoulder_Press", elevLat: "Side_Lateral_Raise", tricepsKb: "Standing_Dumbbell_Triceps_Extension", fundos: "Bench_Dips", prancha: "Plank", deadBug: "Dead_Bug", bicicleta: "Air_Bike", russian: "Russian_Twist", pranchaLat: "Side_Bridge", elevPernas: "Flat_Bench_Lying_Leg_Raise", along: "Cat_Stretch" };
-// Pesquisa de vídeo no YouTube (abre noutro separador)
-const VIDEO = { hipThrust: "hip thrust em casa com discos", pulseHT: "hip thrust pulses band", swing: "kettlebell swing técnica correta", hiit: "HIIT em casa 30 segundos", clam: "clamshell com banda exercício", fireHyd: "fire hydrant com banda exercício", frog: "frog pump glúteos", abdSent: "abdução sentada com banda glúteos", ponteElev: "ponte de glúteos pés elevados", rdlKb: "peso morto romeno kettlebell", rdlUni: "peso morto unilateral kettlebell", bulgaro: "agachamento búlgaro halteres", superman: "superman Y T exercício", deadBug: "dead bug exercício" };
-const videoURL = (id) => "https://www.youtube.com/results?search_query=" + encodeURIComponent(VIDEO[id] || EX[id].nome + " como fazer");
-function demoHTML(id, cls) {
-  if (!IMG[id]) return `<a class="demo none ${cls}" href="${videoURL(id)}" target="_blank" rel="noopener">▶<br>Ver vídeo</a>`;
-  return `<button class="demo ${cls}" data-ex="${id}" aria-label="Ver como se faz ${esc(EX[id].nome)}"><img src="img/${IMG[id]}_0.jpg" alt="" loading="lazy"><img src="img/${IMG[id]}_1.jpg" alt="" loading="lazy"></button>`;
-}
-
 // ---------- Treinos ----------
 // s = séries por fase (3 em todos os exercícios exceto ativação) [readaptação, construção, intensificação]; reps e carga podem variar por fase.
 const TREINOS = {
@@ -449,9 +431,9 @@ const TREINOS = {
       { ex: "hipThrust", s: [3, 3, 3], reps: ["12", "10–12", "8–10"], rest: 90, carga: ["1 disco 10 kg", "2 discos (20 kg)", "2 discos + banda nos joelhos"] },
       { ex: "rdlKb", s: [3, 3, 3], reps: "12", rest: 90, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg, 3 s a descer"] },
       { ex: "sumoKb", s: [3, 3, 3], reps: "12–15", rest: 60, carga: ["KB 12 kg", "KB 16 kg", "KB 16 kg + pausa em baixo"] },
-      { ex: "ponteUni", s: [3, 3, 3], reps: "12/perna", rest: 45, carga: ["Peso corporal", "Peso corporal", "Halter 5 kg na anca"] } ] },
+      { ex: "ponteUni", s: [3, 3, 3], reps: "12/perna, 2 s em cima", rest: 45, carga: ["Peso corporal", "Peso corporal", "Halter 5 kg na anca"] } ] },
     { titulo: "Finalizador", itens: [
-      { ex: "abdLado", s: [3, 3, 3], reps: "20/lado", rest: 30, carga: "Banda média" },
+      { ex: "abdLado", s: [3, 3, 3], reps: "15/lado, 2 s em cima", rest: 30, carga: "Banda média" },
       { ex: "pulseHT", s: [3, 3, 3], reps: "30–40 s", rest: 30, carga: "Banda + 1 disco 10 kg" } ] } ] },
   TA: { nome: "Tronco A", sub: "Costas, bíceps e abdominais", tipo: "tronco", min: 40, blocos: [
     { titulo: "Ativação", itens: [
@@ -477,8 +459,9 @@ const TREINOS = {
       { ex: "afundoTras", s: [3, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] },
       { ex: "stepUp", s: [3, 3, 3], reps: "12/perna", rest: 60, carga: ["Peso corporal", "Halteres 3 kg", "Halteres 5 kg"] } ] },
     { titulo: "Finalizador", itens: [
-      { ex: "coice", s: [3, 3, 3], reps: "15/perna", rest: 30, carga: "Banda média" },
-      { ex: "abdSent", s: [3, 3, 3], reps: "20", rest: 30, carga: "Banda forte" } ] } ] },
+      { ex: "coice", s: [3, 3, 3], reps: "10/perna, 2 s em cima", rest: 30, carga: "Banda média" },
+      { ex: "abdSent", s: [3, 3, 3], reps: "20", rest: 30, carga: "Banda forte" },
+      { ex: "tabata", s: [1, 1, 1], reps: "4 min", rest: 0, carga: "20 s ativo / 10 s pausa × 8" } ] } ] },
   TB: { nome: "Tronco B", sub: "Ombros, peito, tríceps e abdominais", tipo: "tronco", min: 40, blocos: [
     { titulo: "Principal", itens: [
       { ex: "flexoes", s: [3, 3, 3], reps: ["6–8", "8–10", "10–12"], rest: 60, carga: ["Joelhos no chão", "Joelhos ou completas", "Completas"] },
@@ -490,7 +473,8 @@ const TREINOS = {
     { titulo: "Abdominais", itens: [
       { ex: "russian", s: [3, 3, 3], reps: "20", rest: 30, carga: ["Sem peso", "Halter 3 kg", "Halter 5 kg"] },
       { ex: "pranchaLat", s: [3, 3, 3], reps: ["15–20 s/lado", "25 s/lado", "30–40 s/lado"], rest: 30, carga: "Peso corporal" },
-      { ex: "elevPernas", s: [3, 3, 3], reps: "10–12", rest: 30, carga: "Peso corporal" } ] } ] },
+      { ex: "elevPernas", s: [3, 3, 3], reps: "10–12", rest: 30, carga: "Peso corporal" },
+      { ex: "urso", s: [3, 3, 3], reps: ["16 toques", "20 toques", "24 toques"], rest: 30, carga: "Peso corporal" } ] } ] },
   GC: { nome: "Glúteos C", sub: "Kettlebell e cardio para queimar", tipo: "gluteo", min: 40, blocos: [
     { titulo: "Ativação", itens: [
       { ex: "monster", s: [2, 2, 2], reps: "12 passos/lado", rest: 30, carga: "Banda média" } ] },
@@ -787,16 +771,12 @@ function exCard(it, f) {
   const presc = n > 1 ? `${n} × ${pick(it.reps, f)}` : pick(it.reps, f);
   const ultima = state.cargas[it.ex];
   card.innerHTML = `
-    <div class="ex-top">${demoHTML(it.ex, "thumb")}<div>
-      <div class="ex-head"><button class="ex-name"></button><span class="ex-presc">${esc(presc)}</span></div>
-      <div class="ex-sub">${esc(pick(it.carga, f))}${it.rest ? ` · descanso ${it.rest} s` : ""}</div>
-      <a class="video" href="${videoURL(it.ex)}" target="_blank" rel="noopener">▶ Ver vídeo</a>
-    </div></div>
-    <div class="sets" style="margin-top:12px"></div>
+    <div class="ex-head"><button class="ex-name"></button><span class="ex-presc">${esc(presc)}</span></div>
+    <div class="ex-sub">${esc(pick(it.carga, f))}${it.rest ? ` · descanso ${it.rest} s` : ""}</div>
+    <div class="sets"></div>
     ${ultima && reg?.cargas?.[it.ex] == null ? `<div class="last">Última vez: ${esc(ultima)}</div>` : ""}`;
   card.querySelector(".ex-name").textContent = e.nome;
   card.querySelector(".ex-name").onclick = () => openEx(it.ex);
-  card.querySelector("button.demo")?.addEventListener("click", () => openEx(it.ex));
   const sets = card.querySelector(".sets");
   for (let i = 0; i < n; i++) {
     const b = document.createElement("button");
@@ -864,6 +844,16 @@ function renderPlano() {
       <p class="small muted">Regista a carga em cada exercício; da próxima vez aparece "Última vez" para te orientar.</p>
     </div>
     <div class="card text-card">
+      <h2>Ideias dos treinadores que segues</h2>
+      <ul>
+        <li><strong>Tay Training</strong>: músculo e perda de gordura ao mesmo tempo, com foco em glúteos, pernas, abdómen e braços. Daqui vêm a técnica cuidada no búlgaro e nos afundos e o circuito de corpo todo de sexta.</li>
+        <li><strong>Rauve Haley</strong>: sentir o glúteo antes de pôr carga. Por isso há ativação no início, pausas de 2 s em cima no coice, na ponte unilateral e na abdução, e trabalho de glúteo médio (zona de cima do glúteo).</li>
+        <li><strong>Carol Borba</strong>: treinos curtos e intensos em casa. Daqui vem o Tabata de glúteos com banda (4 min) no fim de Glúteos B.</li>
+        <li><strong>Ariel Yu</strong>: pequenos ajustes para trabalhar mais o glúteo do que a coxa (inclinação do tronco no búlgaro, posição dos pés no hip thrust), abdominais em quatro apoios e saltar à corda no HIIT.</li>
+      </ul>
+      <p class="small muted">Os detalhes de cada exercício estão em "Como fazer", no separador Exercícios.</p>
+    </div>
+    <div class="card text-card">
       <h2>Para emagrecer e tonificar</h2>
       <ul>
         <li><strong>Défice calórico</strong>: segue o plano da app Dieta. O treino tonifica, a alimentação faz baixar a gordura.</li>
@@ -909,8 +899,7 @@ function renderExercicios() {
   for (const [id, e] of lista) {
     const li = document.createElement("li");
     li.className = "tap";
-    li.innerHTML = `<span class="demo ${IMG[id] ? "" : "none"}" style="width:64px;flex:none">${IMG[id] ? `<img src="img/${IMG[id]}_0.jpg" alt="" loading="lazy">` : "▶"}</span>
-      <div style="flex:1;min-width:0"><div class="name"></div><div class="meta"></div></div><span class="muted">›</span>`;
+    li.innerHTML = `<div><div class="name"></div><div class="meta"></div></div><span class="muted">›</span>`;
     li.querySelector(".name").textContent = e.nome;
     li.querySelector(".meta").textContent = `${e.musc} · ${e.equip}`;
     li.onclick = () => openEx(id);
@@ -924,8 +913,6 @@ function openEx(id) {
   const usos = Object.entries(TREINOS).filter(([, t]) => t.blocos.some((b) => b.itens.some((i) => i.ex === id))).map(([, t]) => t.nome);
   $("#sheetTitle").textContent = e.nome;
   $("#sheetBody").innerHTML = `
-    ${IMG[id] ? demoHTML(id, "big") : ""}
-    <a class="video btn" href="${videoURL(id)}" target="_blank" rel="noopener">▶ Ver vídeo no YouTube</a>
     <div class="card"><dl class="kv">
       <dt>Músculos</dt><dd>${esc(e.musc)}</dd>
       <dt>Material</dt><dd>${esc(e.equip)}</dd>
@@ -936,8 +923,7 @@ function openEx(id) {
     <div class="card"><dl class="kv">
       <dt>Mais fácil</dt><dd>${esc(e.facil)}</dd>
       <dt>Mais difícil</dt><dd>${esc(e.dificil)}</dd>
-    </dl></div>
-    ${IMG[id] ? `<p class="credit">A imagem alterna entre a posição inicial e a final. Fotografias: Free Exercise DB (domínio público); algumas mostram a versão de ginásio do mesmo movimento.</p>` : ""}`;
+    </dl></div>`;
   $("#sheet").hidden = false;
   document.body.classList.add("noscroll");
 }
