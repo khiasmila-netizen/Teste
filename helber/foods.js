@@ -82,6 +82,7 @@ const FOOD_ROWS = [
   ["Iogurte grego magro", 59, 10, 3.6, 0.4, "1 iogurte", 125],
   ["Iogurte de aromas", 85, 3, 13, 2.2, "1 iogurte", 125],
   ["Iogurte líquido", 75, 2.8, 12, 1.6, "1 garrafa", 170],
+  ["Iogurte líquido proteína Go Active (baunilha)", 53, 8.9, 3.3, 0.5, "1 garrafa", 170],
   ["Skyr natural", 63, 11, 4, 0.2, "1 copo", 150],
   ["Skyr natural sem lactose", 63, 11, 4, 0.2, "1 copo", 150],
   ["Queijo fresco", 98, 11, 3.4, 4.3, "1 unidade", 80],

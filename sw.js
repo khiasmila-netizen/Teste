@@ -1,6 +1,6 @@
 // Service worker: guarda os ficheiros da app para funcionar sem internet.
 // Muda a versão sempre que alterares ficheiros, para o telemóvel ir buscar a nova versão.
-const CACHE = "dieta-v8";
+const CACHE = "dieta-v9";
 const PREFIX = CACHE.replace(/\d+$/, ""); // só apaga caches desta app
 const FILES = [
   "./", "./index.html", "./style.css", "./app.js", "./foods.js", "./plano.js",

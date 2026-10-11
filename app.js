@@ -578,7 +578,7 @@ function inDiary(plano, dia, ref) {
 }
 function addMealToDiary(plano, dia, ref) {
   const m = planMeal(plano, dia, ref);
-  if (!m || inDiary(plano, dia, ref)) return 0;
+  if (!m || !m.itens.length || inDiary(plano, dia, ref)) return 0;
   const tag = planTag(plano, dia, ref);
   getDay(shiftDay(plano.semana, dia)).itens.push(...m.itens.map((i) => ({ ...i, plano: tag })));
   m.itens.forEach((i) => addRecente(i.nome));
@@ -635,7 +635,7 @@ function renderPlano() {
   body.querySelectorAll(".day-chip").forEach((b) => (b.onclick = () => { planoDia = +b.dataset.d; renderPlano(); }));
   const addDay = $("#addDay");
   if (addDay) {
-    const todos = refs.every((x) => inDiary(plano, planoDia, x.ref));
+    const todos = refs.filter((x) => x.m.itens.length).every((x) => inDiary(plano, planoDia, x.ref));
     addDay.disabled = todos;
     addDay.textContent = todos ? "✓ Dia todo no Diário" : "Adicionar o dia todo ao Diário";
     addDay.onclick = () => {
@@ -662,7 +662,7 @@ function renderPlano() {
       <ul class="list ingredients"></ul>
       ${m.faltam.length ? `<p class="small warn">Sem dados nutricionais: ${esc(m.faltam.join(", "))}</p>` : ""}
       <div class="meal-actions">
-        ${added
+        ${!m.itens.length ? `<span class="muted small">Sem alimentos definidos: regista no Diário o que comeres.</span>` : added
           ? `<span class="in-diary">✓ No Diário</span><button class="link undo">Retirar</button>`
           : `<button class="link add">+ Adicionar ao Diário</button>`}
       </div>`;
