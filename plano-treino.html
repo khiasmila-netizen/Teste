@@ -724,10 +724,12 @@ function sonoCard() {
 }
 
 // ---------- Resumo semanal para o PT ----------
-const APP_VERSAO = "11 out 2026 · sono e resumo";
+const APP_VERSAO = "11 out 2026 · resumo a partir do 1.º domingo";
+// O resumo só faz sentido a partir do primeiro domingo do plano (início + 6 dias).
+const primeiroDomingo = () => shiftDay(state.inicio, 6);
 function textoResumo() {
-  const hoje = todayISO(), ini = shiftDay(hoje, -6);
-  const dias = Array.from({ length: 7 }, (_, i) => shiftDay(ini, i));
+  const hoje = todayISO(), ini = shiftDay(hoje, -6) < state.inicio ? state.inicio : shiftDay(hoje, -6);
+  const dias = Array.from({ length: 7 }, (_, i) => shiftDay(ini, i)).filter((d) => d <= hoje);
   const L = [`Resumo de treino da Katia: ${fmtDate(ini, { day: "numeric", month: "short" })} a ${fmtDate(hoje, { day: "numeric", month: "short" })}`];
   if (hoje >= state.inicio) { const f = faseDe(hoje); L.push(`Semana ${f.semana} do plano (${FASES[f.fase].nome})`); }
 
@@ -789,7 +791,7 @@ $("#shareBtn").onclick = enviarResumo;
 // Lembrete: ao domingo, se o resumo desta semana ainda não foi enviado
 function lembreteCard() {
   const hoje = todayISO();
-  if (currentDay !== hoje || weekday(hoje) !== 6 || state.resumoEnviado === mondayOf(hoje)) return null;
+  if (currentDay !== hoje || weekday(hoje) !== 6 || hoje < primeiroDomingo() || state.resumoEnviado === mondayOf(hoje)) return null;
   const c = document.createElement("div");
   c.className = "card";
   c.style.borderColor = "var(--accent)";
@@ -1210,6 +1212,11 @@ function renderProgresso() {
   }
   $("#inicio").value = state.inicio;
   $("#appVersao").textContent = APP_VERSAO;
+  const cedo = hoje < primeiroDomingo();
+  $("#shareBtn").disabled = cedo;
+  $("#shareBtn").style.opacity = cedo ? ".5" : "";
+  if (cedo) $("#shareInfo").textContent = `Disponível a partir de ${fmtDate(primeiroDomingo(), { weekday: "long", day: "numeric", month: "long" })}, depois da primeira semana de treino.`;
+  else if ($("#shareInfo").textContent.startsWith("Disponível")) $("#shareInfo").textContent = "";
 }
 $("#medForm").onsubmit = (e) => {
   e.preventDefault();
