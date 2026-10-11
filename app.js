@@ -913,6 +913,28 @@ function renderAll() {
 }
 renderAll();
 
+// Versão da app (mudar sempre que se publica; igual ao número da cache em sw.js)
+const VERSAO_APP = "10";
+$("#appVersao").textContent = VERSAO_APP;
+
+// Vai buscar a versão mais recente: remove o service worker e as cópias guardadas desta app
+// (não toca nos registos, que estão no localStorage) e recarrega.
+$("#updateBtn").onclick = async () => {
+  $("#updateBtn").textContent = "A atualizar…";
+  try {
+    if ("serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.filter((r) => new URL(r.scope).pathname === new URL(".", location.href).pathname).map((r) => r.unregister()));
+    }
+    if (window.caches) {
+      const prefixo = STORE_KEY === "dietaTeste.v1" ? "dieta-v" : "helber-v";
+      const keys = await caches.keys();
+      await Promise.all(keys.filter((k) => k.startsWith(prefixo)).map((k) => caches.delete(k)));
+    }
+  } catch {}
+  location.reload();
+};
+
 // Permite instalar como app (precisa de https, ex.: GitHub Pages)
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   const hadController = !!navigator.serviceWorker.controller;
