@@ -208,3 +208,4 @@ nav .tab { padding: 8px 4px; font-size: .92rem; }
 .in-diary { color: var(--accent); font-weight: 600; font-size: .9rem; }
 .warn { color: var(--over); }
 .empty p { margin: 0 0 8px; }
+.share-text { width: 100%; margin-top: 10px; font: .8rem/1.4 ui-monospace, monospace; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); resize: vertical; }

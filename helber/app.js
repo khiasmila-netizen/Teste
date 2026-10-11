@@ -33,6 +33,13 @@ function save() {
 }
 
 let state = load();
+// Ajuste único ao perfil definido no plano (ex.: meta de calorias combinada com o personal trainer)
+if (typeof AJUSTE_PERFIL !== "undefined" && state.perfil && !(state.ajustes || []).includes(AJUSTE_PERFIL.id)) {
+  const { id, ...campos } = AJUSTE_PERFIL;
+  Object.assign(state.perfil, campos);
+  state.ajustes = [...(state.ajustes || []), id];
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {}
+}
 let currentDay = todayISO();
 
 // ---------- Utilitários ----------
@@ -852,6 +859,51 @@ $("#resetBtn").onclick = () => {
 
 // Botão "voltar" do Android fecha o ecrã de alimentos em vez de sair da app
 window.addEventListener("popstate", () => closeSheet());
+
+// ---------- Partilhar resumo da semana ----------
+function weeklySummary() {
+  const tgt = calcTargets(state.perfil) || DEFAULT_TARGETS;
+  const nome = document.title;
+  const linhas = [`${nome} · resumo de ${fmtDiaMes(shiftDay(todayISO(), -6))} a ${fmtDiaMes(todayISO())}`];
+  const atual = pesoAtual(), ini = pesoInicial(), meta = state.meta.pesoMeta;
+  if (atual) linhas.push(`Peso: ${fmtKg(atual)}${ini ? ` (inicial ${fmtKg(ini)})` : ""}${meta ? ` · meta ${fmtKg(meta)} · faltam ${fmtKg(Math.max(0, atual - meta))}` : ""}`);
+  const pesosSemana = state.pesos.filter((w) => w.data >= shiftDay(todayISO(), -6)).sort((a, b) => a.data.localeCompare(b.data));
+  if (pesosSemana.length) linhas.push(`Pesagens: ${pesosSemana.map((w) => `${fmtDiaMes(w.data)} ${fmtKg(w.kg)}`).join(", ")}`);
+  linhas.push(`Meta diária: ${round(tgt.kcal)} kcal · P ${round(tgt.p)} g · H ${round(tgt.c)} g · G ${round(tgt.g)} g`, "");
+  let soma = 0, n = 0;
+  for (let i = 6; i >= 0; i--) {
+    const d = shiftDay(todayISO(), -i);
+    const dia = state.dias[d];
+    const nomeDia = `${DIAS_CURTOS[(new Date(d + "T12:00:00").getDay() + 6) % 7]} ${fmtDiaMes(d)}`;
+    if (!dia || !dia.itens.length) { linhas.push(`${nomeDia}: sem registos${dia?.agua ? ` · água ${dia.agua} copos` : ""}`); continue; }
+    const t = totals(dia.itens);
+    soma += t.kcal; n++;
+    linhas.push(`${nomeDia}: ${round(t.kcal)} kcal · P ${round(t.p)} · H ${round(t.c)} · G ${round(t.g)} · água ${dia.agua || 0} copos`);
+    for (const ref of REFEICOES) {
+      const its = dia.itens.filter((x) => x.refeicao === ref);
+      if (its.length) linhas.push(`  ${ref}: ${its.map((x) => `${x.nome} (${x.porcaoTxt || x.gramas + " g"})`).join(", ")}`);
+    }
+  }
+  if (n) linhas.push("", `Média nos ${n} dia(s) com registos: ${round(soma / n)} kcal/dia`);
+  return linhas.join("\n");
+}
+
+$("#shareBtn").onclick = async () => {
+  const texto = weeklySummary();
+  const ta = $("#shareText");
+  ta.value = texto;
+  ta.hidden = false;
+  if (navigator.share) {
+    try { await navigator.share({ title: "Resumo da semana", text: texto }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  try {
+    await navigator.clipboard.writeText(texto);
+    toast("Resumo copiado. Cola-o na conversa do personal trainer.");
+  } catch {
+    ta.focus(); ta.select();
+    toast("Seleciona o texto e copia-o.");
+  }
+};
 
 function renderAll() {
   renderDiario();

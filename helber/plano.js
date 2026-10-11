@@ -27,10 +27,10 @@
 // }
 const PLANOS = [];
 
-// Produtos que o Helber usa (valores da embalagem / loja, por 100 g ou 100 ml)
+// Produtos que o Helber usa (valores da embalagem / loja, por 100 g ou 100 ml).
+// O Whey Protein Decathlon (neutro) já está em foods.js.
 FOODS.push(
   { nome: "Leite meio-gordo Mimosa", kcal: 48, p: 3.4, c: 4.9, g: 1.6, porcao: "1 copo (250 ml)", porcaoG: 250 },
-  { nome: "Whey Protein Decathlon (neutro)", kcal: 397, p: 75, c: 12, g: 5.4, porcao: "1 dose (30 g)", porcaoG: 30 },
 );
 
 // Pequeno-almoço (sempre igual) e lanches que se repetem ao longo da semana
