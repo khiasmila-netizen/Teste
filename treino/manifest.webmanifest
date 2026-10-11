@@ -1,6 +1,7 @@
 {
+  "id": "./plano-treino-app",
   "name": "Plano Treino",
-  "short_name": "Treino",
+  "short_name": "Plano Treino",
   "description": "Plano de treino em casa: 3 dias de glúteos e 2 de tronco, com séries, descanso e progresso.",
   "lang": "pt",
   "start_url": "./",
@@ -9,8 +10,21 @@
   "background_color": "#f6f3f4",
   "theme_color": "#b5345a",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
