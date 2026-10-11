@@ -3,8 +3,8 @@
 
 Uso: python3 tools/build_treino.py
 
-Fica em https://khiasmila-netizen.github.io/Teste/treino/ quando a pasta treino/
-está no ramo publicado pelo GitHub Pages. Os dados ficam no telemóvel (localStorage),
+Publica-se copiando treino/ para o repositório khiasmila-netizen/plano-treino
+(https://khiasmila-netizen.github.io/plano-treino/). Os dados ficam no telemóvel (localStorage),
 separados da Dieta Katia. Volta a correr o script depois de mudares plano-treino.html.
 """
 import pathlib
@@ -37,6 +37,10 @@ if ("serviceWorker" in navigator && location.protocol === "https:") {
     if (recarregou || !jaTinha) return;
     recarregou = true;
     location.reload();
+  });
+  // Sempre que a app volta a ficar visível, procura uma versão nova.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") navigator.serviceWorker.getRegistration().then((r) => r && r.update()).catch(() => {});
   });
 }
 </script>

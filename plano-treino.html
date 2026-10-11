@@ -183,6 +183,14 @@ body.noscroll { overflow: hidden; }
 .diff-down { color: var(--ok); }
 .diff-up { color: var(--over); }
 
+/* Sono */
+.sleep-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sleep-row label { display: flex; flex-direction: column; gap: 4px; font-size: .82rem; color: var(--muted); }
+.sleep-row input { min-width: 0; color: var(--text); font-size: 1rem; }
+.sleep-sum { margin-top: 10px; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.ok-txt { color: var(--ok); font-weight: 600; }
+.late-txt { color: var(--over); font-weight: 600; }
+
 #toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: .9rem; opacity: 0; pointer-events: none; transition: .25s; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -219,6 +227,13 @@ body.noscroll { overflow: hidden; }
   </section>
 
   <section id="progresso" class="panel">
+    <div class="card">
+      <h2>Resumo para o PT</h2>
+      <p class="small muted" style="margin:0 0 10px">Treinos, cargas, sono e medidas dos últimos 7 dias, prontos a enviar.</p>
+      <button class="primary block" id="shareBtn">Enviar resumo ao PT</button>
+      <p class="small muted" id="shareInfo" style="margin:8px 0 0"></p>
+      <textarea id="shareTxt" readonly hidden rows="10" style="width:100%;margin-top:10px;font:inherit;font-size:.85rem;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)"></textarea>
+    </div>
     <div class="card" id="dietaCard" hidden>
       <h2>Peso <span class="status">da app Dieta</span></h2>
       <div class="stats">
@@ -238,6 +253,16 @@ body.noscroll { overflow: hidden; }
         <div class="stat"><strong id="sProg">1</strong><span>Semana do plano</span></div>
       </div>
       <svg id="weekChart" class="chart" viewBox="0 0 320 150" role="img" aria-label="Treinos concluídos por semana"></svg>
+    </div>
+    <div class="card">
+      <h2>😴 Sono <span class="status">últimos 7 dias</span></h2>
+      <div class="stats">
+        <div class="stat"><strong id="slMedia">–</strong><span>Média por noite</span></div>
+        <div class="stat"><strong id="slCedo">–</strong><span>Deitada até às 23h</span></div>
+        <div class="stat"><strong>23h00</strong><span>Meta: luz apagada</span></div>
+      </div>
+      <ul class="list" id="sonoList" style="margin-top:8px"></ul>
+      <p class="small muted">Regista o sono todas as manhãs no separador Treino.</p>
     </div>
     <div class="card">
       <h2>Medidas</h2>
@@ -266,6 +291,7 @@ body.noscroll { overflow: hidden; }
         <button id="resetBtn" class="danger">Apagar todos os dados</button>
         <button id="resetCancel" hidden>Cancelar</button>
       </div>
+      <p class="small muted" style="margin:12px 0 0">Versão da app: <span id="appVersao"></span></p>
     </div>
   </section>
 </main>
@@ -529,11 +555,12 @@ const defaultState = {
   treinos: {},           // { "2026-10-12": { tipo, series: {ex: [bool]}, cargas: {ex: "texto"}, concluido, esforco } }
   cargas: {},            // última carga usada por exercício
   medidas: [],           // [{ data, peso, cintura, anca, coxa }]
+  sono: {},              // { "2026-10-12": { deitar: "23:00", acordar: "07:00" } } — a data é a da manhã em que acordou
 };
 function load(raw) {
   try {
     const s = { ...structuredClone(defaultState), ...JSON.parse(raw ?? localStorage.getItem(STORE_KEY)) };
-    s.treinos ||= {}; s.cargas ||= {}; s.medidas ||= [];
+    s.treinos ||= {}; s.cargas ||= {}; s.medidas ||= []; s.sono ||= {};
     return s;
   } catch { return structuredClone(defaultState); }
 }
@@ -659,6 +686,120 @@ function lerDieta() {
 let state = load();
 let currentDay = todayISO();
 
+// ---------- Sono ----------
+const SONO_META = "23:00"; // luz apagada até esta hora
+const minsDe = (h) => { const [a, b] = h.split(":").map(Number); return a * 60 + b; };
+const minSono = (s) => (s?.deitar && s?.acordar ? (minsDe(s.acordar) - minsDe(s.deitar) + 1440) % 1440 : null);
+const aHoras = (s) => { const m = minsDe(s.deitar); return m >= 18 * 60 && m <= minsDe(SONO_META); };
+const fmtHM = (min) => `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, "0")}`;
+function resumoSono(s) {
+  const min = minSono(s);
+  if (min == null) return "";
+  return `<strong>${fmtHM(min)}</strong> de sono · ` + (aHoras(s)
+    ? `<span class="ok-txt">✓ deitaste-te a horas</span>`
+    : `<span class="late-txt">deitaste-te depois das 23h</span>`);
+}
+function sonoCard() {
+  const s = state.sono[currentDay] || {};
+  const c = document.createElement("div");
+  c.className = "card";
+  c.innerHTML = `<h2>😴 Sono da noite passada</h2>
+    <div class="sleep-row">
+      <label>Deitei-me (luz apagada) <input type="time" id="sDeitar"></label>
+      <label>Acordei <input type="time" id="sAcordar"></label>
+    </div>
+    <div class="sleep-sum" id="sSum"></div>
+    <p class="small muted">Meta: luz apagada até às 23h00, telemóvel fora do quarto.</p>`;
+  const dt = c.querySelector("#sDeitar"), ac = c.querySelector("#sAcordar");
+  dt.value = s.deitar || ""; ac.value = s.acordar || "";
+  c.querySelector("#sSum").innerHTML = resumoSono(s);
+  const upd = () => {
+    if (!dt.value && !ac.value) delete state.sono[currentDay];
+    else state.sono[currentDay] = { deitar: dt.value, acordar: ac.value };
+    save();
+    c.querySelector("#sSum").innerHTML = resumoSono(state.sono[currentDay]);
+  };
+  dt.onchange = upd; ac.onchange = upd;
+  return c;
+}
+
+// ---------- Resumo semanal para o PT ----------
+const APP_VERSAO = "11 out 2026 · sono e resumo";
+function textoResumo() {
+  const hoje = todayISO(), ini = shiftDay(hoje, -6);
+  const dias = Array.from({ length: 7 }, (_, i) => shiftDay(ini, i));
+  const L = [`Resumo de treino da Katia: ${fmtDate(ini, { day: "numeric", month: "short" })} a ${fmtDate(hoje, { day: "numeric", month: "short" })}`];
+  if (hoje >= state.inicio) { const f = faseDe(hoje); L.push(`Semana ${f.semana} do plano (${FASES[f.fase].nome})`); }
+
+  const feitos = dias.filter((d) => registo(d)?.concluido);
+  const forca = feitos.filter((d) => FORCA.includes(tipoDe(d)));
+  L.push("", `TREINOS: ${forca.length} de 5 concluídos`);
+  for (const d of dias) {
+    const r = registo(d), k = tipoDe(d), t = TREINOS[k];
+    if (t.tipo === "descanso" && !r?.concluido) continue;
+    const f = faseDe(d).serie;
+    const estado = r?.concluido ? "✓" : seriesFeitas(t, f, r) ? "incompleto" : "não feito";
+    const series = t.tipo === "ativo" ? "" : `, ${seriesFeitas(t, f, r)}/${totalSeries(t, f)} séries`;
+    const troca = k !== SEMANA[weekday(d)] ? " (trocado)" : "";
+    L.push(`- ${fmtDate(d)}: ${t.nome}${troca}, ${estado}${series}${r?.esforco ? `, esforço ${r.esforco.toLowerCase()}` : ""}`);
+    const cargas = Object.entries(r?.cargas || {}).filter(([, v]) => v);
+    if (cargas.length) L.push("  Cargas: " + cargas.map(([ex, v]) => `${EX[ex]?.nome || ex} ${v}`).join("; "));
+  }
+
+  const noites = dias.map((d) => [d, state.sono[d]]).filter(([, s]) => minSono(s) != null);
+  L.push("", "SONO (meta: luz apagada até às 23h00)");
+  if (noites.length) {
+    const media = Math.round(noites.reduce((a, [, s]) => a + minSono(s), 0) / noites.length);
+    L.push(`Média ${fmtHM(media)} por noite · ${noites.filter(([, s]) => aHoras(s)).length}/${noites.length} noites com luz apagada até às 23h`);
+    for (const [d, s] of noites) L.push(`- ${fmtDate(d)}: ${s.deitar} → ${s.acordar} (${fmtHM(minSono(s))})${aHoras(s) ? "" : " · depois das 23h"}`);
+  } else L.push("Sem registos.");
+
+  const meds = [...state.medidas].sort((a, b) => a.data.localeCompare(b.data));
+  const ult = meds.at(-1), prim = meds[0];
+  L.push("", "MEDIDAS");
+  if (ult) {
+    const v = (m, k, u) => (m[k] == null ? null : `${k} ${m[k].toLocaleString("pt-PT")} ${u}` + (prim !== m && prim[k] != null ? ` (início ${prim[k].toLocaleString("pt-PT")})` : ""));
+    L.push(`Últimas (${fmtDate(ult.data, { day: "numeric", month: "short" })}): ` + [v(ult, "peso", "kg"), v(ult, "cintura", "cm"), v(ult, "anca", "cm"), v(ult, "coxa", "cm")].filter(Boolean).join(", "));
+  } else L.push("Sem registos.");
+  const dieta = lerDieta();
+  if (dieta?.atual != null) L.push(`Peso na app Dieta: ${dieta.atual.toLocaleString("pt-PT")} kg` + (dieta.meta ? ` (meta ${dieta.meta.toLocaleString("pt-PT")} kg)` : ""));
+  return L.join("\n");
+}
+async function enviarResumo() {
+  const txt = textoResumo();
+  const marcar = () => { state.resumoEnviado = mondayOf(todayISO()); save(); };
+  const info = $("#shareInfo"), area = $("#shareTxt");
+  area.hidden = true;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "Resumo da semana", text: txt });
+      marcar(); info.textContent = "Enviado. Escolheste a app e a conversa no menu de partilha.";
+      return;
+    } catch (e) { if (e && e.name === "AbortError") { info.textContent = "Envio cancelado."; return; } }
+  }
+  try {
+    await navigator.clipboard.writeText(txt);
+    marcar(); info.textContent = "Resumo copiado. Abre a conversa do PT na app Claude e cola.";
+  } catch {
+    area.value = txt; area.hidden = false; area.focus(); area.select();
+    info.textContent = "Seleciona o texto abaixo, copia-o e cola-o na conversa do PT.";
+  }
+}
+$("#shareBtn").onclick = enviarResumo;
+// Lembrete: ao domingo, se o resumo desta semana ainda não foi enviado
+function lembreteCard() {
+  const hoje = todayISO();
+  if (currentDay !== hoje || weekday(hoje) !== 6 || state.resumoEnviado === mondayOf(hoje)) return null;
+  const c = document.createElement("div");
+  c.className = "card";
+  c.style.borderColor = "var(--accent)";
+  c.innerHTML = `<h2>📨 É domingo: envia o resumo da semana ao PT</h2>
+    <button class="primary block">Enviar resumo ao PT</button>
+    <p class="small muted" style="margin:8px 0 0" id="lembInfo"></p>`;
+  c.querySelector("button").onclick = async () => { await enviarResumo(); if (state.resumoEnviado === mondayOf(hoje)) renderHoje(); else c.querySelector("#lembInfo").textContent = $("#shareInfo").textContent; };
+  return c;
+}
+
 // ---------- Temporizador de descanso ----------
 let tEnd = 0, tTick = null, audio = null;
 function beep() {
@@ -738,6 +879,9 @@ function renderHoje() {
     r.series = {}; r.concluido = false;
     save(); renderHoje();
   };
+  const lemb = lembreteCard();
+  if (lemb) body.insertBefore(lemb, hero);
+  body.appendChild(sonoCard());
 
   if (t.tipo === "descanso") {
     const c = document.createElement("div");
@@ -1027,6 +1171,23 @@ function renderProgresso() {
   }
   $("#mPeso").placeholder = dieta?.atual != null ? `${dieta.atual.toLocaleString("pt-PT")} (Dieta)` : "";
 
+  // Sono (últimos 7 dias)
+  const noites = [];
+  for (let i = 0; i < 7; i++) {
+    const d = shiftDay(hoje, -i), s = state.sono[d];
+    if (minSono(s) != null) noites.push([d, s]);
+  }
+  $("#slMedia").textContent = noites.length ? fmtHM(Math.round(noites.reduce((a, [, s]) => a + minSono(s), 0) / noites.length)) : "–";
+  $("#slCedo").textContent = noites.length ? `${noites.filter(([, s]) => aHoras(s)).length}/${noites.length}` : "–";
+  const sl = $("#sonoList");
+  sl.innerHTML = noites.length ? "" : `<li class="empty">Ainda não há noites registadas.</li>`;
+  for (const [d, s] of noites) {
+    const li = document.createElement("li");
+    li.innerHTML = `<div><div class="name">${esc(fmtDate(d))}</div><div class="meta">${esc(s.deitar)} → ${esc(s.acordar)}</div></div>
+      <span class="num ${aHoras(s) ? "ok-txt" : "late-txt"}">${fmtHM(minSono(s))}</span>`;
+    sl.appendChild(li);
+  }
+
   // Medidas
   $("#mData").value ||= hoje;
   const ml = $("#medList");
@@ -1048,6 +1209,7 @@ function renderProgresso() {
     ml.appendChild(li);
   }
   $("#inicio").value = state.inicio;
+  $("#appVersao").textContent = APP_VERSAO;
 }
 $("#medForm").onsubmit = (e) => {
   e.preventDefault();
@@ -1103,3 +1265,4 @@ function renderAll() { renderHoje(); renderPlano(); renderExercicios(); renderPr
   initCloud();
 })();
 </script>
+
